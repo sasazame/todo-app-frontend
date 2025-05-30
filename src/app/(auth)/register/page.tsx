@@ -47,7 +47,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  const { register: registerUser, isLoading, error, clearError } = useRegister();
+  const { register: registerUser, isLoading, clearError } = useRegister();
 
   const {
     register,
@@ -81,11 +81,6 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-                {error}
-              </div>
-            )}
 
             <div>
               <Input

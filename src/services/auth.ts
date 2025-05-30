@@ -6,6 +6,7 @@ import {
   User,
   AuthError 
 } from '@/types/auth';
+import { getErrorMessage } from '@/utils/errorMessages';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
@@ -34,8 +35,9 @@ async function handleResponse<T>(response: Response): Promise<T> {
       );
     }
 
+    const friendlyMessage = getErrorMessage(new Error(errorData.error?.message || 'Request failed'));
     throw new AuthAPIError(
-      errorData.error?.message || 'Request failed',
+      friendlyMessage,
       response.status,
       errorData.error?.code,
       errorData.error?.details

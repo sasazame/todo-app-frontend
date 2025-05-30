@@ -4,8 +4,40 @@ import userEvent from '@testing-library/user-event';
 import Home from '../page';
 import { todoApi } from '@/lib/api';
 import { Todo } from '@/types/todo';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 jest.mock('@/lib/api');
+
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+  useSearchParams: jest.fn(),
+}));
+
+// Mock auth API
+jest.mock('@/services/auth', () => ({
+  authAPI: {
+    getCurrentUser: jest.fn(),
+    logout: jest.fn(),
+  },
+  AuthAPIError: class AuthAPIError extends Error {
+    constructor(message: string) {
+      super(message);
+      this.name = 'AuthAPIError';
+    }
+  },
+}));
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
 
 const mockTodos: Todo[] = [
   {
@@ -34,13 +66,41 @@ function renderWithQuery(component: React.ReactElement) {
     },
   });
   return render(
-    <QueryClientProvider client={queryClient}>{component}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        {component}
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
 describe('Home Page', () => {
+  const mockPush = jest.fn();
+  const mockRouter = {
+    push: mockPush,
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorageMock.getItem.mockReturnValue('fake-token');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mockAuthAPI = require('@/services/auth').authAPI;
+    mockAuthAPI.getCurrentUser.mockResolvedValue({
+      id: 1,
+      username: 'testuser',
+      email: 'test@example.com',
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
+    });
+    
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { useRouter } = require('next/navigation');
+    useRouter.mockReturnValue(mockRouter);
   });
 
   it('shows loading state initially', () => {

@@ -110,7 +110,7 @@ describe('TodoList', () => {
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
 
-    expect(mockOnDelete).toHaveBeenCalledWith(1);
+    expect(mockOnDelete).toHaveBeenCalledWith(1, mockTodos[0]);
   });
 
   it('renders empty list when no todos provided', () => {

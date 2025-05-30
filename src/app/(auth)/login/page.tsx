@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
-  const { login, isLoading, error, clearError } = useLogin();
+  const { login, isLoading, clearError } = useLogin();
 
   const {
     register,
@@ -61,11 +61,6 @@ export default function LoginPage() {
               </div>
             )}
             
-            {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-                {error}
-              </div>
-            )}
 
             <div>
               <Input
