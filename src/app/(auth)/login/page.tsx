@@ -37,7 +37,10 @@ export default function LoginPage() {
     try {
       clearError();
       await login(data.email, data.password);
-      router.push('/');
+      
+      // Redirect to intended page or home
+      const redirectTo = searchParams.get('redirect') || '/';
+      router.push(redirectTo);
     } catch {
       // Error is already handled by the useLogin hook
     }

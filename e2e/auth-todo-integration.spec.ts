@@ -1,0 +1,241 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('Auth + TODO Integration E2E Tests', () => {
+  const testUser = {
+    username: 'testuser',
+    email: 'test@example.com',
+    password: 'TestPassword123!'
+  };
+
+  test.beforeEach(async ({ page }) => {
+    // Clear any existing authentication
+    await page.context().clearCookies();
+    await page.goto('/');
+  });
+
+  test('should redirect unauthenticated user to login', async ({ page }) => {
+    // Try to access home page
+    await page.goto('/');
+    
+    // Should be redirected to login
+    await expect(page).toHaveURL(/.*\/login/);
+    await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
+  });
+
+  test('should redirect authenticated user away from auth pages', async ({ page }) => {
+    // First register and login
+    await page.goto('/register');
+    await page.fill('input[name="username"]', testUser.username);
+    await page.fill('input[name="email"]', testUser.email);
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign up")');
+
+    // Should be redirected to login
+    await expect(page).toHaveURL(/.*\/login/);
+    
+    // Login
+    await page.fill('input[name="email"]', testUser.email);
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // Should be redirected to home
+    await expect(page).toHaveURL('/');
+    await expect(page.getByRole('heading', { name: 'TODO App' })).toBeVisible();
+
+    // Try to go back to login page
+    await page.goto('/login');
+    
+    // Should be redirected back to home
+    await expect(page).toHaveURL('/');
+  });
+
+  test('should preserve intended destination after login', async ({ page }) => {
+    // Try to access a specific page that would require auth
+    await page.goto('/?todo=123');
+    
+    // Should be redirected to login with redirect parameter
+    await expect(page).toHaveURL(/.*\/login\?redirect=/);
+    
+    // Register if needed
+    try {
+      await page.goto('/register');
+      await page.fill('input[name="username"]', testUser.username + '2');
+      await page.fill('input[name="email"]', 'test2@example.com');
+      await page.fill('input[name="password"]', testUser.password);
+      await page.click('button:has-text("Sign up")');
+    } catch {
+      // User might already exist
+    }
+
+    // Go back to login with redirect
+    await page.goto('/login?redirect=%2F%3Ftodo%3D123');
+    
+    // Login
+    await page.fill('input[name="email"]', 'test2@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // Should be redirected to the intended page
+    await expect(page).toHaveURL('/?todo=123');
+  });
+
+  test('should show user info in header and allow logout', async ({ page }) => {
+    // Register and login
+    await page.goto('/register');
+    await page.fill('input[name="username"]', testUser.username + '3');
+    await page.fill('input[name="email"]', 'test3@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign up")');
+
+    // Login
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'test3@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // Should be on home page with header
+    await expect(page).toHaveURL('/');
+    await expect(page.getByText(testUser.username + '3')).toBeVisible();
+    await expect(page.getByText('test3@example.com')).toBeVisible();
+
+    // Logout
+    await page.click('button:has-text("Logout")');
+    
+    // Should be redirected to login
+    await expect(page).toHaveURL(/.*\/login/);
+  });
+
+  test('should handle auth token expiration gracefully', async ({ page }) => {
+    // Register and login first
+    await page.goto('/register');
+    await page.fill('input[name="username"]', testUser.username + '4');
+    await page.fill('input[name="email"]', 'test4@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign up")');
+
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'test4@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // Wait for successful login
+    await expect(page).toHaveURL('/');
+
+    // Simulate token expiration by clearing localStorage and making an API call
+    await page.evaluate(() => {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    });
+
+    // Try to create a todo (this should trigger 401 and redirect to login)
+    await page.click('button:has-text("Add New Todo")');
+    await page.fill('input[id="title"]', 'Test Todo');
+    await page.click('button:has-text("Create Todo")');
+
+    // Should eventually be redirected to login due to 401 error
+    await expect(page).toHaveURL(/.*\/login/, { timeout: 10000 });
+  });
+
+  test('should create and manage user-specific todos', async ({ page }) => {
+    // Register and login as first user
+    await page.goto('/register');
+    await page.fill('input[name="username"]', 'user1');
+    await page.fill('input[name="email"]', 'user1@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign up")');
+
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'user1@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // Create a todo for user1
+    await page.click('button:has-text("Add New Todo")');
+    await page.fill('input[id="title"]', 'User 1 Todo');
+    await page.fill('textarea[id="description"]', 'This belongs to user 1');
+    await page.click('button:has-text("Create Todo")');
+
+    // Verify todo is created
+    await expect(page.getByText('User 1 Todo')).toBeVisible();
+
+    // Logout
+    await page.click('button:has-text("Logout")');
+
+    // Register and login as second user
+    await page.goto('/register');
+    await page.fill('input[name="username"]', 'user2');
+    await page.fill('input[name="email"]', 'user2@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign up")');
+
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'user2@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // User 2 should not see User 1's todo
+    await expect(page.getByText('User 1 Todo')).not.toBeVisible();
+    
+    // User 2 can create their own todo
+    await page.click('button:has-text("Add New Todo")');
+    await page.fill('input[id="title"]', 'User 2 Todo');
+    await page.fill('textarea[id="description"]', 'This belongs to user 2');
+    await page.click('button:has-text("Create Todo")');
+
+    // Verify only user 2's todo is visible
+    await expect(page.getByText('User 2 Todo')).toBeVisible();
+    await expect(page.getByText('User 1 Todo')).not.toBeVisible();
+  });
+
+  test('should handle API errors gracefully with auth', async ({ page }) => {
+    // Register and login
+    await page.goto('/register');
+    await page.fill('input[name="username"]', testUser.username + '5');
+    await page.fill('input[name="email"]', 'test5@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign up")');
+
+    await page.goto('/login');
+    await page.fill('input[name="email"]', 'test5@example.com');
+    await page.fill('input[name="password"]', testUser.password);
+    await page.click('button:has-text("Sign in")');
+
+    // Mock network to simulate server error
+    await page.route('**/api/v1/todos', route => {
+      route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Internal Server Error' })
+      });
+    });
+
+    // Try to load todos - should show error
+    await page.reload();
+    await expect(page.getByText('Error loading todos')).toBeVisible();
+
+    // Mock network for create todo error
+    await page.route('**/api/v1/todos', route => {
+      if (route.request().method() === 'POST') {
+        route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Bad Request' })
+        });
+      } else {
+        route.continue();
+      }
+    });
+
+    // Remove the GET route mock to allow normal loading
+    await page.unroute('**/api/v1/todos');
+    await page.reload();
+
+    // Try to create todo - should show error notification
+    await page.click('button:has-text("Add New Todo")');
+    await page.fill('input[id="title"]', 'Error Todo');
+    await page.click('button:has-text("Create Todo")');
+
+    // Should show error toast notification
+    await expect(page.locator('[data-testid="toast"]')).toBeVisible();
+  });
+});

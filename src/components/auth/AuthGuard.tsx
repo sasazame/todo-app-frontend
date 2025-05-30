@@ -20,7 +20,14 @@ export function AuthGuard({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push(redirectTo);
+      // Save the current path as intended destination
+      const currentPath = window.location.pathname;
+      const searchParams = new URLSearchParams();
+      if (currentPath !== '/') {
+        searchParams.set('redirect', currentPath);
+      }
+      const loginUrl = `${redirectTo}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+      router.push(loginUrl);
     }
   }, [isAuthenticated, isLoading, router, redirectTo]);
 
