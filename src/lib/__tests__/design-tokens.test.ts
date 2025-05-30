@@ -64,18 +64,18 @@ describe('Design Tokens', () => {
 
     it('returns empty string when window is not available', () => {
       // Simulate server-side rendering environment
-      const originalWindow = (global as any).window;
-      const originalGetComputedStyle = (global as any).getComputedStyle;
+      const originalWindow = (global as unknown as { window: Window }).window;
+      const originalGetComputedStyle = (global as unknown as { getComputedStyle: typeof getComputedStyle }).getComputedStyle;
       
-      (global as any).window = undefined;
-      (global as any).getComputedStyle = undefined;
+      (global as unknown as { window: Window | undefined }).window = undefined;
+      (global as unknown as { getComputedStyle: typeof getComputedStyle | undefined }).getComputedStyle = undefined;
 
       const result = getCSSVar('--color-primary-500');
       expect(result).toBe('');
 
       // Restore window object and getComputedStyle
-      (global as any).window = originalWindow;
-      (global as any).getComputedStyle = originalGetComputedStyle;
+      (global as unknown as { window: Window }).window = originalWindow;
+      (global as unknown as { getComputedStyle: typeof getComputedStyle }).getComputedStyle = originalGetComputedStyle;
     });
   });
 
