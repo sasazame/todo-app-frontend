@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { useLogin, useRegister, useLogout } from '../useAuth';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { authAPI, AuthAPIError } from '@/services/auth';
+import { LoginResponse, RegisterResponse } from '@/types/auth';
 
 // Mock the auth API
 jest.mock('@/services/auth', () => ({
@@ -89,8 +90,8 @@ describe('useAuth hooks', () => {
     });
 
     it('shows loading state during login', async () => {
-      let resolveLogin: (value: unknown) => void;
-      const loginPromise = new Promise((resolve) => {
+      let resolveLogin: (value: LoginResponse) => void;
+      const loginPromise = new Promise<LoginResponse>((resolve) => {
         resolveLogin = resolve;
       });
       mockedAuthAPI.login.mockReturnValue(loginPromise);
@@ -195,8 +196,8 @@ describe('useAuth hooks', () => {
     });
 
     it('shows loading state during registration', async () => {
-      let resolveRegister: (value: unknown) => void;
-      const registerPromise = new Promise((resolve) => {
+      let resolveRegister: (value: RegisterResponse) => void;
+      const registerPromise = new Promise<RegisterResponse>((resolve) => {
         resolveRegister = resolve;
       });
       mockedAuthAPI.register.mockReturnValue(registerPromise);
@@ -285,8 +286,8 @@ describe('useAuth hooks', () => {
     });
 
     it('shows loading state during logout', async () => {
-      let resolveLogout: (value: unknown) => void;
-      const logoutPromise = new Promise((resolve) => {
+      let resolveLogout: (value: void) => void;
+      const logoutPromise = new Promise<void>((resolve) => {
         resolveLogout = resolve;
       });
       mockedAuthAPI.logout.mockReturnValue(logoutPromise);

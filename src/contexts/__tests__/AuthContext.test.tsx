@@ -2,7 +2,7 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 import { AuthProvider, useAuth } from '../AuthContext';
 import { authAPI, AuthAPIError } from '@/services/auth';
-import { User } from '@/types/auth';
+import { User, LoginResponse } from '@/types/auth';
 
 // Mock the auth API
 jest.mock('@/services/auth', () => ({
@@ -158,8 +158,8 @@ describe('AuthContext', () => {
     });
 
     it('shows loading state during login', async () => {
-      let resolveLogin: (value: unknown) => void;
-      const loginPromise = new Promise((resolve) => {
+      let resolveLogin: (value: LoginResponse) => void;
+      const loginPromise = new Promise<LoginResponse>((resolve) => {
         resolveLogin = resolve;
       });
       mockedAuthAPI.login.mockReturnValue(loginPromise);
