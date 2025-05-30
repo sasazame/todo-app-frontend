@@ -93,12 +93,32 @@ npm run type-check && npm run lint && npm test && npm run build
 - 外部ライブラリの型定義を適切に拡張
 - テストでも型安全性を重視
 
+### 6. E2Eテストでのサーバー起動問題
+**問題**: CIでPlaywrightがサーバー起動待機でハング
+**解決策**:
+```typescript
+// playwright.config.ts - CI/ローカル環境分離
+webServer: process.env.CI ? {
+  command: 'npm run start',        // CI: ビルド済み使用
+  reuseExistingServer: false,
+} : {
+  command: 'npm run dev',          // ローカル: 開発サーバー
+  reuseExistingServer: true,
+}
+```
+
+**スモークテスト戦略**:
+- 完全E2Eの代わりにスモークテストを実装
+- API依存を排除し、アプリの基本動作確認
+- 認証フローを考慮した現実的なテスト
+
 ## 今後の改善点
 
 1. **Codecov統合**: テストカバレッジの可視化
 2. **Performance Budget**: Lighthouseスコアの基準設定
 3. **Branch Protection**: mainブランチのプロテクションルール
 4. **Semantic Release**: 自動バージョニング
+5. **E2E完全復活**: バックエンドAPI利用可能時の完全E2Eテスト
 
 ## 結論
 CI/CDパイプラインの成功は、ローカル開発環境での品質担保が基盤。
