@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, UserPlus, Check, X } from 'lucide-react';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
+import { useRegister } from '@/hooks/useAuth';
 
 // Password strength indicator component
 function PasswordStrength({ password }: { password: string }) {
@@ -45,8 +46,8 @@ export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  
+  const { register: registerUser, isLoading, error, clearError } = useRegister();
 
   const {
     register,
@@ -61,21 +62,11 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      setIsSubmitting(true);
-      setError(null);
-      
-      // TODO: Implement actual registration API call
-      console.log('Register data:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // For now, redirect to login
+      clearError();
+      await registerUser(data.username, data.email, data.password);
       router.push('/login?registered=true');
     } catch {
-      setError('Registration failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      // Error is already handled by the useRegister hook
     }
   };
 
@@ -104,7 +95,7 @@ export default function RegisterPage() {
                 placeholder="Choose a username"
                 error={errors.username?.message}
                 autoComplete="username"
-                disabled={isSubmitting}
+                disabled={isLoading}
               />
             </div>
 
@@ -116,7 +107,7 @@ export default function RegisterPage() {
                 placeholder="Enter your email"
                 error={errors.email?.message}
                 autoComplete="email"
-                disabled={isSubmitting}
+                disabled={isLoading}
               />
             </div>
 
@@ -128,7 +119,7 @@ export default function RegisterPage() {
                 placeholder="Create a password"
                 error={errors.password?.message}
                 autoComplete="new-password"
-                disabled={isSubmitting}
+                disabled={isLoading}
                 rightIcon={
                   <button
                     type="button"
@@ -155,7 +146,7 @@ export default function RegisterPage() {
                 placeholder="Confirm your password"
                 error={errors.confirmPassword?.message}
                 autoComplete="new-password"
-                disabled={isSubmitting}
+                disabled={isLoading}
                 rightIcon={
                   <button
                     type="button"
@@ -189,10 +180,10 @@ export default function RegisterPage() {
               type="submit"
               className="w-full"
               size="lg"
-              loading={isSubmitting}
-              leftIcon={!isSubmitting && <UserPlus className="h-4 w-4" />}
+              loading={isLoading}
+              leftIcon={!isLoading && <UserPlus className="h-4 w-4" />}
             >
-              {isSubmitting ? 'Creating account...' : 'Create account'}
+              {isLoading ? 'Creating account...' : 'Create account'}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">

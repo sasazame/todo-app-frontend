@@ -1,19 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn, CheckCircle } from 'lucide-react';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
+import { useLogin } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  const { login, isLoading, error, clearError } = useLogin();
 
   const {
     register,
@@ -23,23 +26,20 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  useEffect(() => {
+    // Check for registration success message
+    if (searchParams.get('registered') === 'true') {
+      setSuccessMessage('Account created successfully! Please log in to continue.');
+    }
+  }, [searchParams]);
+
   const onSubmit = async (data: LoginFormData) => {
     try {
-      setIsSubmitting(true);
-      setError(null);
-      
-      // TODO: Implement actual login API call
-      console.log('Login data:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For now, just redirect to home
+      clearError();
+      await login(data.email, data.password);
       router.push('/');
     } catch {
-      setError('Invalid email or password. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      // Error is already handled by the useLogin hook
     }
   };
 
@@ -54,6 +54,13 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {successMessage && (
+              <div className="p-3 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                {successMessage}
+              </div>
+            )}
+            
             {error && (
               <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
                 {error}
@@ -68,7 +75,7 @@ export default function LoginPage() {
                 placeholder="Enter your email"
                 error={errors.email?.message}
                 autoComplete="email"
-                disabled={isSubmitting}
+                disabled={isLoading}
               />
             </div>
 
@@ -80,7 +87,7 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 error={errors.password?.message}
                 autoComplete="current-password"
-                disabled={isSubmitting}
+                disabled={isLoading}
                 rightIcon={
                   <button
                     type="button"
@@ -111,10 +118,10 @@ export default function LoginPage() {
               type="submit"
               className="w-full"
               size="lg"
-              loading={isSubmitting}
-              leftIcon={!isSubmitting && <LogIn className="h-4 w-4" />}
+              loading={isLoading}
+              leftIcon={!isLoading && <LogIn className="h-4 w-4" />}
             >
-              {isSubmitting ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">

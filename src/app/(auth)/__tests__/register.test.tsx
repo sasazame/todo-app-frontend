@@ -2,11 +2,39 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRouter } from 'next/navigation';
 import RegisterPage from '../register/page';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ReactNode } from 'react';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
+
+// Mock auth API
+jest.mock('@/services/auth', () => ({
+  authAPI: {
+    register: jest.fn(),
+    getCurrentUser: jest.fn(),
+    logout: jest.fn(),
+  },
+  AuthAPIError: class AuthAPIError extends Error {
+    constructor(message: string) {
+      super(message);
+      this.name = 'AuthAPIError';
+    }
+  },
+}));
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
 
 describe('RegisterPage', () => {
   const mockPush = jest.fn();
@@ -19,13 +47,18 @@ describe('RegisterPage', () => {
     prefetch: jest.fn(),
   };
 
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <AuthProvider>{children}</AuthProvider>
+  );
+
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorageMock.getItem.mockReturnValue(null);
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
   });
 
   it('renders registration form correctly', () => {
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     expect(screen.getByRole('heading', { name: /create an account/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
@@ -39,7 +72,7 @@ describe('RegisterPage', () => {
 
   it('shows validation errors for empty fields', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const submitButton = screen.getByRole('button', { name: /create account/i });
     await user.click(submitButton);
@@ -54,7 +87,7 @@ describe('RegisterPage', () => {
 
   it('shows password strength indicator', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const passwordInput = screen.getByLabelText(/^password$/i);
 
@@ -75,7 +108,7 @@ describe('RegisterPage', () => {
 
   it('validates password confirmation', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const passwordInput = screen.getByLabelText(/^password$/i);
     const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
@@ -93,7 +126,7 @@ describe('RegisterPage', () => {
 
   it('validates username format', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const usernameInput = screen.getByLabelText(/username/i);
     
@@ -110,7 +143,7 @@ describe('RegisterPage', () => {
 
   it('toggles password visibility', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const passwordInput = screen.getByLabelText(/^password$/i);
     const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
@@ -135,7 +168,19 @@ describe('RegisterPage', () => {
 
   it('submits form with valid data', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    
+    // Create a controllable promise for register API call
+    let resolveRegister: (value: unknown) => void;
+    const registerPromise = new Promise((resolve) => {
+      resolveRegister = resolve;
+    });
+    
+    // Mock auth API to use our controllable promise
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mockAuthAPI = require('@/services/auth').authAPI;
+    mockAuthAPI.register.mockReturnValue(registerPromise);
+    
+    render(<RegisterPage />, { wrapper });
 
     const usernameInput = screen.getByLabelText(/username/i);
     const emailInput = screen.getByLabelText(/email/i);
@@ -150,18 +195,31 @@ describe('RegisterPage', () => {
     const submitButton = screen.getByRole('button', { name: /create account/i });
     await user.click(submitButton);
 
+    // Should show loading state
     await waitFor(() => {
       expect(submitButton).toHaveTextContent(/creating account/i);
     });
 
-    // Wait for the simulated API call
+    // Resolve the register promise
+    resolveRegister!({
+      user: {
+        id: 1,
+        username: 'testuser',
+        email: 'test@example.com',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+      message: 'Registration successful',
+    });
+
+    // Wait for redirect
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/login?registered=true');
-    }, { timeout: 2000 });
+    });
   });
 
   it('has correct links', () => {
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const signInLink = screen.getByRole('link', { name: /sign in/i });
     expect(signInLink).toHaveAttribute('href', '/login');
@@ -175,7 +233,7 @@ describe('RegisterPage', () => {
 
   it('shows strong password when all requirements are met', async () => {
     const user = userEvent.setup();
-    render(<RegisterPage />);
+    render(<RegisterPage />, { wrapper });
 
     const passwordInput = screen.getByLabelText(/^password$/i);
     await user.type(passwordInput, 'StrongPass123!');
