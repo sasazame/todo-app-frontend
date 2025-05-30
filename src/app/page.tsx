@@ -9,6 +9,7 @@ import { AuthGuard } from '@/components/auth';
 import { useAuth, useLogout } from '@/hooks/useAuth';
 import { todoApi } from '@/lib/api';
 import { Todo, CreateTodoDto, UpdateTodoDto } from '@/types/todo';
+import { showSuccess, showError } from '@/components/ui/toast';
 
 export default function Home() {
   const { user } = useAuth();
@@ -25,18 +26,26 @@ export default function Home() {
 
   const createMutation = useMutation({
     mutationFn: todoApi.create,
-    onSuccess: () => {
+    onSuccess: (newTodo) => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       setIsAddingTodo(false);
+      showSuccess(`Todo "${newTodo.title}" created successfully!`);
+    },
+    onError: (error) => {
+      showError(error instanceof Error ? error.message : 'Failed to create todo');
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdateTodoDto }) => 
       todoApi.update(id, data),
-    onSuccess: () => {
+    onSuccess: (updatedTodo) => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       setEditingTodo(null);
+      showSuccess(`Todo "${updatedTodo.title}" updated successfully!`);
+    },
+    onError: (error) => {
+      showError(error instanceof Error ? error.message : 'Failed to update todo');
     },
   });
 
@@ -44,7 +53,12 @@ export default function Home() {
     mutationFn: todoApi.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
+      const todoTitle = deletingTodo?.title || 'Todo';
       setDeletingTodo(null);
+      showSuccess(`"${todoTitle}" deleted successfully!`);
+    },
+    onError: (error) => {
+      showError(error instanceof Error ? error.message : 'Failed to delete todo');
     },
   });
 

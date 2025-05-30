@@ -15,7 +15,7 @@ describe('Card Components', () => {
       
       const card = screen.getByTestId('card');
       expect(card).toBeInTheDocument();
-      expect(card).toHaveClass('bg-card', 'border', 'p-4', 'rounded-lg', 'shadow-sm');
+      expect(card).toHaveClass('bg-card', 'text-card-foreground', 'border', 'border-border', 'transition-all', 'duration-200', 'shadow-sm');
     });
 
     it('renders different variants correctly', () => {

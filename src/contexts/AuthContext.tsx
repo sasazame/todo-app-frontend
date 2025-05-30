@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { User } from '@/types/auth';
-import { authAPI, AuthAPIError } from '@/services/auth';
+import { authAPI } from '@/services/auth';
+import { showSuccess, showError } from '@/components/ui/toast';
+import { getErrorMessage } from '@/utils/errorMessages';
 
 interface AuthState {
   user: User | null;
@@ -95,9 +97,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('refreshToken', data.refreshToken);
       
       dispatch({ type: 'AUTH_SUCCESS', payload: data.user });
+      showSuccess(`Welcome back, ${data.user.username}!`);
     } catch (error) {
-      const message = error instanceof AuthAPIError ? error.message : 'An unexpected error occurred';
+      const message = getErrorMessage(error);
       dispatch({ type: 'AUTH_ERROR', payload: message });
+      showError(message);
       throw error;
     }
   };
@@ -110,9 +114,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       // For register, we just return success - user needs to login separately
       dispatch({ type: 'AUTH_LOGOUT' });
+      showSuccess('Account created successfully! Please log in to continue.');
     } catch (error) {
-      const message = error instanceof AuthAPIError ? error.message : 'An unexpected error occurred';
+      const message = getErrorMessage(error);
       dispatch({ type: 'AUTH_ERROR', payload: message });
+      showError(message);
       throw error;
     }
   };
@@ -129,6 +135,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       dispatch({ type: 'AUTH_LOGOUT' });
+      showSuccess('You have been logged out successfully.');
     }
   };
 
