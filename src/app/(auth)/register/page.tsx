@@ -1,0 +1,212 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff, UserPlus, Check, X } from 'lucide-react';
+import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
+import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
+
+// Password strength indicator component
+function PasswordStrength({ password }: { password: string }) {
+  const requirements = [
+    { regex: /.{8,}/, text: 'At least 8 characters' },
+    { regex: /[A-Z]/, text: 'One uppercase letter' },
+    { regex: /[a-z]/, text: 'One lowercase letter' },
+    { regex: /[0-9]/, text: 'One number' },
+    { regex: /[^A-Za-z0-9]/, text: 'One special character' },
+  ];
+
+  return (
+    <div className="mt-2 space-y-1">
+      <p className="text-xs font-medium text-muted-foreground mb-1">Password requirements:</p>
+      {requirements.map((req, index) => {
+        const isValid = req.regex.test(password);
+        return (
+          <div key={index} className="flex items-center gap-2 text-xs">
+            {isValid ? (
+              <Check className="h-3 w-3 text-success-500" />
+            ) : (
+              <X className="h-3 w-3 text-muted-foreground" />
+            )}
+            <span className={isValid ? 'text-success-500' : 'text-muted-foreground'}>
+              {req.text}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function RegisterPage() {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  const password = watch('password', '');
+
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      setIsSubmitting(true);
+      setError(null);
+      
+      // TODO: Implement actual registration API call
+      console.log('Register data:', data);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // For now, redirect to login
+      router.push('/login?registered=true');
+    } catch {
+      setError('Registration failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-2 text-center">
+          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+          <CardDescription>
+            Enter your information to get started
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <Input
+                {...register('username')}
+                type="text"
+                label="Username"
+                placeholder="Choose a username"
+                error={errors.username?.message}
+                autoComplete="username"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div>
+              <Input
+                {...register('email')}
+                type="email"
+                label="Email"
+                placeholder="Enter your email"
+                error={errors.email?.message}
+                autoComplete="email"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div>
+              <Input
+                {...register('password')}
+                type={showPassword ? 'text' : 'password'}
+                label="Password"
+                placeholder="Create a password"
+                error={errors.password?.message}
+                autoComplete="new-password"
+                disabled={isSubmitting}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                }
+              />
+              {password && <PasswordStrength password={password} />}
+            </div>
+
+            <div>
+              <Input
+                {...register('confirmPassword')}
+                type={showConfirmPassword ? 'text' : 'password'}
+                label="Confirm Password"
+                placeholder="Confirm your password"
+                error={errors.confirmPassword?.message}
+                autoComplete="new-password"
+                disabled={isSubmitting}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                }
+              />
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              By creating an account, you agree to our{' '}
+              <Link href="/terms" className="text-primary hover:underline">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link href="/privacy" className="text-primary hover:underline">
+                Privacy Policy
+              </Link>
+              .
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              loading={isSubmitting}
+              leftIcon={!isSubmitting && <UserPlus className="h-4 w-4" />}
+            >
+              {isSubmitting ? 'Creating account...' : 'Create account'}
+            </Button>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Already have an account?{' '}
+              <Link
+                href="/login"
+                className="text-primary hover:underline focus:outline-none focus:underline"
+              >
+                Sign in
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
