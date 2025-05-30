@@ -19,7 +19,14 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
+  webServer: process.env.CI ? {
+    // CI環境: ビルド済みアプリケーションを起動
+    command: 'npm run start',
+    url: 'http://localhost:3000',
+    reuseExistingServer: false,
+    timeout: 120 * 1000,
+  } : {
+    // ローカル環境: 開発サーバーを起動
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: true,
