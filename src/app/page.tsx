@@ -149,7 +149,7 @@ export default function Home() {
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Delete Todo</h2>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete "{deletingTodo.title}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{deletingTodo.title}&quot;? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-end">
                 <button

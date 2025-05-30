@@ -143,4 +143,26 @@ describe('TodoEditForm', () => {
     const dueDateInput = screen.getByLabelText(/due date/i) as HTMLInputElement;
     expect(dueDateInput.value).toBe('');
   });
+
+  it('has visible text in input fields', () => {
+    render(
+      <TodoEditForm
+        todo={mockTodo}
+        onSubmit={mockOnSubmit}
+        onCancel={mockOnCancel}
+      />
+    );
+
+    const titleInput = screen.getByLabelText(/title/i);
+    const descriptionTextarea = screen.getByLabelText(/description/i);
+    const statusSelect = screen.getByLabelText(/status/i);
+    const prioritySelect = screen.getByLabelText(/priority/i);
+    const dueDateInput = screen.getByLabelText(/due date/i);
+
+    expect(titleInput).toHaveClass('text-gray-900');
+    expect(descriptionTextarea).toHaveClass('text-gray-900');
+    expect(statusSelect).toHaveClass('text-gray-900');
+    expect(prioritySelect).toHaveClass('text-gray-900');
+    expect(dueDateInput).toHaveClass('text-gray-900');
+  });
 });

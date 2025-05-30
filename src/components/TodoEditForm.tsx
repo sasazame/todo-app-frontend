@@ -51,7 +51,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
               {...register('title', { required: 'Title is required' })}
               type="text"
               id="title"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             />
             {errors.title && (
               <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
@@ -66,7 +66,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
               {...register('description')}
               id="description"
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             />
           </div>
 
@@ -78,7 +78,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
               <select
                 {...register('status')}
                 id="status"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value="TODO">TODO</option>
                 <option value="IN_PROGRESS">IN PROGRESS</option>
@@ -93,7 +93,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
               <select
                 {...register('priority')}
                 id="priority"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value="LOW">LOW</option>
                 <option value="MEDIUM">MEDIUM</option>
@@ -110,7 +110,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
               {...register('dueDate')}
               type="date"
               id="dueDate"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             />
           </div>
 
