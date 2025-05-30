@@ -15,7 +15,10 @@ describe('Card Components', () => {
       
       const card = screen.getByTestId('card');
       expect(card).toBeInTheDocument();
-      expect(card).toHaveClass('bg-card', 'text-card-foreground', 'border', 'border-border', 'transition-all', 'duration-200', 'shadow-sm');
+      expect(card).toHaveClass('bg-card', 'text-card-foreground', 'border', 'border-border', 'transition-all', 'duration-200');
+      expect(card).toHaveClass('shadow-sm'); // default variant
+      expect(card).toHaveClass('p-4'); // default padding
+      expect(card).toHaveClass('rounded-lg'); // default rounded
     });
 
     it('renders different variants correctly', () => {

@@ -8,8 +8,9 @@ describe('Button', () => {
     
     const button = screen.getByRole('button', { name: /click me/i });
     expect(button).toBeInTheDocument();
-    expect(button).toHaveClass('h-10', 'px-4', 'text-sm'); // md size
-    expect(button).toHaveClass('bg-primary'); // primary variant
+    expect(button).toHaveClass('inline-flex', 'items-center', 'justify-center');
+    expect(button).toHaveClass('h-10', 'px-4', 'text-sm'); // md size (default)
+    expect(button).toHaveClass('bg-primary'); // primary variant (default)
   });
 
   it('renders different variants correctly', () => {

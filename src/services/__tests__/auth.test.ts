@@ -81,10 +81,8 @@ describe('authAPI', () => {
       mockedFetch.mockResolvedValue({
         ok: false,
         status: 500,
-        json: async () => {
-          throw new Error('Invalid JSON');
-        },
-      } as Response);
+        json: () => Promise.reject(new Error('Invalid JSON')),
+      } as unknown as Response);
 
       await expect(authAPI.login(loginData)).rejects.toThrow(AuthAPIError);
       await expect(authAPI.login(loginData)).rejects.toThrow('Network error occurred');

@@ -186,7 +186,6 @@ describe('Home Page', () => {
   });
 
   it('deletes a todo with confirmation', async () => {
-    const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(true);
     (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
     (todoApi.delete as jest.Mock).mockResolvedValue(undefined);
     
@@ -199,16 +198,23 @@ describe('Home Page', () => {
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
 
-    expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to delete this todo?');
+    // Check that delete confirmation modal appears
+    await waitFor(() => {
+      expect(screen.getByText('Delete Todo')).toBeInTheDocument();
+      expect(screen.getByText('Are you sure you want to delete "Test Todo 1"? This action cannot be undone.')).toBeInTheDocument();
+    });
+
+    // Click the confirm delete button in the modal
+    const modal = screen.getByText('Delete Todo').closest('div');
+    const confirmButton = modal!.querySelector('button:last-child') as HTMLButtonElement;
+    fireEvent.click(confirmButton);
+
     await waitFor(() => {
       expect(todoApi.delete).toHaveBeenCalledWith(1);
     });
-
-    confirmSpy.mockRestore();
   });
 
   it('cancels delete when not confirmed', async () => {
-    const confirmSpy = jest.spyOn(window, 'confirm').mockReturnValue(false);
     (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
     
     renderWithQuery(<Home />);
@@ -220,9 +226,20 @@ describe('Home Page', () => {
     const deleteButtons = screen.getAllByText('Delete');
     fireEvent.click(deleteButtons[0]);
 
-    expect(todoApi.delete).not.toHaveBeenCalled();
+    // Check that delete confirmation modal appears
+    await waitFor(() => {
+      expect(screen.getByText('Delete Todo')).toBeInTheDocument();
+    });
 
-    confirmSpy.mockRestore();
+    // Click the cancel button
+    const cancelButton = screen.getByText('Cancel');
+    fireEvent.click(cancelButton);
+
+    // Modal should disappear and delete should not be called
+    await waitFor(() => {
+      expect(screen.queryByText('Delete Todo')).not.toBeInTheDocument();
+    });
+    expect(todoApi.delete).not.toHaveBeenCalled();
   });
 
   it('opens edit form when Edit button clicked', async () => {

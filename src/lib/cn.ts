@@ -49,7 +49,7 @@ export function cva<T extends Record<string, Record<string, string>>>(
     // First apply default variants
     if (config.defaultVariants) {
       for (const [variantKey, defaultValue] of Object.entries(config.defaultVariants)) {
-        if (!(variantKey in variantProps) && defaultValue && config.variants[variantKey]?.[defaultValue as string]) {
+        if ((!(variantKey in variantProps) || (variantProps as Record<string, unknown>)[variantKey] === undefined) && defaultValue && config.variants[variantKey]?.[defaultValue as string]) {
           classes.push(config.variants[variantKey][defaultValue as string]);
         }
       }
