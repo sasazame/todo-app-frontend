@@ -1,5 +1,8 @@
 # TODO App Frontend
 
+[![CI/CD Pipeline](https://github.com/sasazame/todo-app-frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/sasazame/todo-app-frontend/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/sasazame/todo-app-frontend/branch/main/graph/badge.svg)](https://codecov.io/gh/sasazame/todo-app-frontend)
+
 Next.js 15 + React 19 + TypeScript で構築されたTODOアプリケーションのフロントエンド
 
 ## 🚀 プロジェクト概要
