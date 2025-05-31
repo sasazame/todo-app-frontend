@@ -11,7 +11,7 @@ import { todoApi } from '@/lib/api';
 import { Todo, CreateTodoDto, UpdateTodoDto } from '@/types/todo';
 import { showSuccess, showError } from '@/components/ui/toast';
 
-export default function Home() {
+function TodoApp() {
   const queryClient = useQueryClient();
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
@@ -119,8 +119,7 @@ export default function Home() {
   }
 
   return (
-    <AuthGuard>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <Header />
         <main className="container py-8">
           <div className="mb-6">
@@ -185,6 +184,13 @@ export default function Home() {
         )}
         </main>
       </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <AuthGuard>
+      <TodoApp />
     </AuthGuard>
   );
 }

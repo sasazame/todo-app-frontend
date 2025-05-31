@@ -39,7 +39,8 @@ export default function LoginPage() {
       await login(data.email, data.password);
       
       // Redirect to intended page or home
-      const redirectTo = searchParams.get('redirect') || '/';
+      const redirectParam = searchParams.get('redirect');
+      const redirectTo = redirectParam ? decodeURIComponent(redirectParam) : '/';
       router.push(redirectTo);
     } catch {
       // Error is already handled by the useLogin hook

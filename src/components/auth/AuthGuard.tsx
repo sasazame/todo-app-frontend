@@ -20,9 +20,10 @@ export function AuthGuard({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      // Save the current path as intended destination
-      const currentPath = window.location.pathname;
+      // Save the current path with query params as intended destination
+      const currentPath = window.location.pathname + window.location.search;
       const searchParams = new URLSearchParams();
+      // Save redirect if not just root path without query params
       if (currentPath !== '/') {
         searchParams.set('redirect', currentPath);
       }

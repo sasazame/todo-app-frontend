@@ -185,10 +185,11 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
 
-    - name: Run E2E Smoke tests
-      run: npm run test:e2e:smoke
+    - name: Run E2E tests
+      run: npm run test:e2e:app && npm run test:e2e:auth
       env:
         CI: true
+        NEXT_PUBLIC_CI: true
         NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
 
     - name: Upload Playwright report

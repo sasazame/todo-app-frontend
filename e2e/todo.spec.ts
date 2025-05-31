@@ -1,8 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { login, TEST_USER, ensureLoggedOut } from './helpers/auth';
 
 test.describe('Todo App E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    // Ensure clean state
+    await ensureLoggedOut(page);
+    
+    // Login first
+    await page.goto('/login');
+    await login(page, TEST_USER.email, TEST_USER.password);
+    
+    // Should be redirected to main app
     await page.waitForLoadState('networkidle');
     // Wait for React to hydrate and API calls to complete
     await page.waitForTimeout(2000);
@@ -97,9 +105,9 @@ test.describe('Todo App E2E Tests', () => {
     // Wait for the todo to appear
     await page.waitForSelector(`text=${todoTitle}`, { timeout: 10000 });
 
-    // Verify the todo is displayed
-    await expect(page.getByText(todoTitle)).toBeVisible();
-    await expect(page.getByText(todoDescription)).toBeVisible();
+    // Verify the todo is displayed (look specifically in the todo list, not in toasts)
+    await expect(page.locator('.space-y-4').getByText(todoTitle)).toBeVisible();
+    await expect(page.locator('.space-y-4').getByText(todoDescription)).toBeVisible();
   });
 
   test('should delete a todo', async ({ page }) => {
@@ -131,8 +139,8 @@ test.describe('Todo App E2E Tests', () => {
     // Wait for modal to close
     await expect(page.getByRole('heading', { name: 'Delete Todo', exact: true })).not.toBeVisible();
 
-    // Verify the todo is removed
-    await expect(page.getByText(todoTitle)).not.toBeVisible();
+    // Verify the todo is removed from the list (ignore toast messages)
+    await expect(page.locator('.space-y-4').getByText(todoTitle)).not.toBeVisible();
   });
 
   test('should cancel todo creation', async ({ page }) => {
@@ -177,8 +185,8 @@ test.describe('Todo App E2E Tests', () => {
     // Cancel deletion
     await page.getByRole('button', { name: 'Cancel' }).click();
     
-    // Verify modal is closed and todo still exists
+    // Verify modal is closed and todo still exists in the list
     await expect(page.getByRole('heading', { name: 'Delete Todo', exact: true })).not.toBeVisible();
-    await expect(page.getByText(todoTitle)).toBeVisible();
+    await expect(page.locator('.space-y-4').getByText(todoTitle)).toBeVisible();
   });
 });
