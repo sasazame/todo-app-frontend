@@ -1,9 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { login, TEST_USER } from './helpers/auth';
+import { login, TEST_USER, setupMockIfNeeded } from './helpers/auth';
 import { waitForApp } from './helpers/setup';
 
 test.describe('Todo Basic Operations', () => {
   test.beforeEach(async ({ page }) => {
+    // Setup mocks if needed
+    await setupMockIfNeeded(page);
+    
     // Login before each test (user should already exist)
     await page.goto('/login');
     await waitForApp(page);
@@ -102,12 +105,12 @@ test.describe('Todo Basic Operations', () => {
     await expect(page.locator('h2:has-text("Edit Todo")')).toBeVisible();
     
     // Change status
-    await page.selectOption('select[name="status"]', 'COMPLETED');
+    await page.selectOption('select[name="status"]', 'DONE');
     
     // Save
     await page.click('button:has-text("Update Todo")');
     
     // Verify status changed (look for visual indicator)
-    await expect(todoItem.locator('text=COMPLETED')).toBeVisible({ timeout: 10000 });
+    await expect(todoItem.locator('text=DONE')).toBeVisible({ timeout: 10000 });
   });
 });

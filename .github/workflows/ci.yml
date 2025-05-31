@@ -176,7 +176,7 @@ jobs:
   #       done
   #       
   #       # Run tests
-  #       npm run test:e2e:smoke
+  #       npm run test:e2e:ci-smoke
   #       
   #       # Cleanup
   #       kill $APP_PID || true

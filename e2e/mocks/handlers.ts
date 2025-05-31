@@ -30,7 +30,7 @@ export const handlers = [
   http.post(`${API_URL}/auth/login`, async ({ request }) => {
     const body = await request.json() as { email: string; password: string };
     
-    if (body.email === 'test@example.com' && body.password === 'Test123!@#') {
+    if (body.email === 'test@example.com' && body.password === 'Test123') {
       return HttpResponse.json({
         user: mockUser,
         accessToken: 'mock-access-token',
@@ -85,7 +85,7 @@ export const handlers = [
       );
     }
     
-    return HttpResponse.json(todos);
+    return HttpResponse.json({ content: todos });
   }),
 
   http.post(`${API_URL}/todos`, async ({ request }) => {
