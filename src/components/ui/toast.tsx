@@ -13,6 +13,9 @@ export const showSuccess = (message: string) => {
       border: '1px solid hsl(var(--border))',
       borderRadius: 'var(--radius-md)',
       fontSize: 'var(--font-size-sm)',
+      boxShadow: 'var(--shadow-lg)',
+      backdropFilter: 'blur(8px)',
+      zIndex: 'var(--z-index-tooltip)',
     },
   });
 };
@@ -28,6 +31,9 @@ export const showError = (message: string) => {
       border: '1px solid hsl(var(--destructive))',
       borderRadius: 'var(--radius-md)',
       fontSize: 'var(--font-size-sm)',
+      boxShadow: 'var(--shadow-lg)',
+      backdropFilter: 'blur(8px)',
+      zIndex: 'var(--z-index-tooltip)',
     },
   });
 };
@@ -44,6 +50,9 @@ export const showInfo = (message: string) => {
       border: '1px solid hsl(var(--border))',
       borderRadius: 'var(--radius-md)',
       fontSize: 'var(--font-size-sm)',
+      boxShadow: 'var(--shadow-lg)',
+      backdropFilter: 'blur(8px)',
+      zIndex: 'var(--z-index-tooltip)',
     },
   });
 };
@@ -58,6 +67,9 @@ export const showLoading = (message: string) => {
       border: '1px solid hsl(var(--border))',
       borderRadius: 'var(--radius-md)',
       fontSize: 'var(--font-size-sm)',
+      boxShadow: 'var(--shadow-lg)',
+      backdropFilter: 'blur(8px)',
+      zIndex: 'var(--z-index-tooltip)',
     },
   });
 };
@@ -86,6 +98,9 @@ export function ToastProvider() {
           borderRadius: 'var(--radius-md)',
           fontSize: 'var(--font-size-sm)',
           maxWidth: 'min(400px, calc(100vw - var(--spacing-8)))',
+          boxShadow: 'var(--shadow-lg)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 'var(--z-index-tooltip)',
         },
         success: {
           style: {
