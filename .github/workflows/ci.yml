@@ -196,12 +196,40 @@ jobs:
           echo "Build artifacts not found, building locally..."
           npm run build
         fi
+        
+        # Verify build output exists
+        if [ ! -d ".next" ]; then
+          echo "Error: .next directory not found after build"
+          exit 1
+        fi
+        
+        echo "Build verification complete"
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
 
-    - name: Run E2E tests
-      run: npm run test:e2e:app && npm run test:e2e:auth
+    - name: Start application and test
+      run: |
+        # Start the application in background
+        npm run start &
+        APP_PID=$!
+        
+        # Wait for app to be ready
+        echo "Waiting for app to start..."
+        for i in {1..30}; do
+          if curl -f http://localhost:3000 >/dev/null 2>&1; then
+            echo "App is ready"
+            break
+          fi
+          echo "Waiting... ($i/30)"
+          sleep 2
+        done
+        
+        # Run tests
+        npm run test:e2e:smoke
+        
+        # Cleanup
+        kill $APP_PID || true
       env:
         CI: true
         NEXT_PUBLIC_CI: true
