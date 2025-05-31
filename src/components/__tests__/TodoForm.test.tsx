@@ -126,10 +126,10 @@ describe('TodoForm', () => {
     const prioritySelect = screen.getByLabelText(/priority/i);
     const dueDateInput = screen.getByLabelText(/due date/i);
 
-    expect(titleInput).toHaveClass('text-gray-900');
-    expect(descriptionTextarea).toHaveClass('text-gray-900');
-    expect(statusSelect).toHaveClass('text-gray-900');
-    expect(prioritySelect).toHaveClass('text-gray-900');
-    expect(dueDateInput).toHaveClass('text-gray-900');
+    expect(titleInput).toHaveClass('text-foreground');
+    expect(descriptionTextarea).toHaveClass('text-foreground');
+    expect(statusSelect).toHaveClass('text-foreground');
+    expect(prioritySelect).toHaveClass('text-foreground');
+    expect(dueDateInput).toHaveClass('text-foreground');
   });
 });

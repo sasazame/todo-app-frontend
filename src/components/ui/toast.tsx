@@ -11,8 +11,8 @@ export const showSuccess = (message: string) => {
       background: 'hsl(var(--background))',
       color: 'hsl(var(--foreground))',
       border: '1px solid hsl(var(--border))',
-      borderRadius: '8px',
-      fontSize: '14px',
+      borderRadius: 'var(--radius-md)',
+      fontSize: 'var(--font-size-sm)',
     },
   });
 };
@@ -26,8 +26,8 @@ export const showError = (message: string) => {
       background: 'hsl(var(--background))',
       color: 'hsl(var(--foreground))',
       border: '1px solid hsl(var(--destructive))',
-      borderRadius: '8px',
-      fontSize: '14px',
+      borderRadius: 'var(--radius-md)',
+      fontSize: 'var(--font-size-sm)',
     },
   });
 };
@@ -42,8 +42,8 @@ export const showInfo = (message: string) => {
       background: 'hsl(var(--background))',
       color: 'hsl(var(--foreground))',
       border: '1px solid hsl(var(--border))',
-      borderRadius: '8px',
-      fontSize: '14px',
+      borderRadius: 'var(--radius-md)',
+      fontSize: 'var(--font-size-sm)',
     },
   });
 };
@@ -56,8 +56,8 @@ export const showLoading = (message: string) => {
       background: 'hsl(var(--background))',
       color: 'hsl(var(--foreground))',
       border: '1px solid hsl(var(--border))',
-      borderRadius: '8px',
-      fontSize: '14px',
+      borderRadius: 'var(--radius-md)',
+      fontSize: 'var(--font-size-sm)',
     },
   });
 };
@@ -83,9 +83,9 @@ export function ToastProvider() {
           background: 'hsl(var(--background))',
           color: 'hsl(var(--foreground))',
           border: '1px solid hsl(var(--border))',
-          borderRadius: '8px',
-          fontSize: '14px',
-          maxWidth: '400px',
+          borderRadius: 'var(--radius-md)',
+          fontSize: 'var(--font-size-sm)',
+          maxWidth: 'min(400px, calc(100vw - var(--spacing-8)))',
         },
         success: {
           style: {

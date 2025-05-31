@@ -10,6 +10,7 @@ import { Header } from '@/components/layout';
 import { todoApi } from '@/lib/api';
 import { Todo, CreateTodoDto, UpdateTodoDto } from '@/types/todo';
 import { showSuccess, showError } from '@/components/ui/toast';
+import { Modal, Button } from '@/components/ui';
 
 function TodoApp() {
   const queryClient = useQueryClient();
@@ -105,7 +106,7 @@ function TodoApp() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-lg text-muted-foreground">Loading...</div>
       </div>
     );
   }
@@ -113,27 +114,27 @@ function TodoApp() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-red-600">Error loading todos</div>
+        <div className="text-lg text-destructive">Error loading todos</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
         <Header />
         <main className="container py-8">
           <div className="mb-6">
           <button
             onClick={() => setIsAddingTodo(true)}
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             Add New Todo
           </button>
         </div>
 
         {todos.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500 text-lg">No todos yet. Create your first todo!</p>
+          <div className="text-center py-12 bg-card rounded-lg shadow">
+            <p className="text-muted-foreground text-lg">No todos yet. Create your first todo!</p>
           </div>
         ) : (
           <TodoList todos={todos} onUpdate={handleUpdate} onDelete={handleDelete} />
@@ -157,30 +158,30 @@ function TodoApp() {
         )}
 
         {deletingTodo && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Delete Todo</h2>
-              <p className="text-gray-600 mb-6">
+          <Modal open={true} onClose={cancelDelete}>
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Delete Todo</h2>
+              <p className="text-muted-foreground">
                 Are you sure you want to delete &quot;{deletingTodo.title}&quot;? This action cannot be undone.
               </p>
               <div className="flex gap-3 justify-end">
-                <button
+                <Button
+                  variant="secondary"
                   onClick={cancelDelete}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
                   disabled={deleteMutation.isPending}
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="danger"
                   onClick={confirmDelete}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
                   disabled={deleteMutation.isPending}
                 >
                   {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
+          </Modal>
         )}
         </main>
       </div>
