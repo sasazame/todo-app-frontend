@@ -67,6 +67,22 @@ export const DesignTokens = {
       input: 'var(--input)',
       ring: 'var(--ring)',
     },
+    priority: {
+      lowBg: 'var(--priority-low-bg)',
+      lowText: 'var(--priority-low-text)',
+      mediumBg: 'var(--priority-medium-bg)',
+      mediumText: 'var(--priority-medium-text)',
+      highBg: 'var(--priority-high-bg)',
+      highText: 'var(--priority-high-text)',
+    },
+    status: {
+      pendingBg: 'var(--status-pending-bg)',
+      pendingText: 'var(--status-pending-text)',
+      inProgressBg: 'var(--status-in-progress-bg)',
+      inProgressText: 'var(--status-in-progress-text)',
+      completedBg: 'var(--status-completed-bg)',
+      completedText: 'var(--status-completed-text)',
+    },
   },
   typography: {
     fontFamily: {

@@ -12,22 +12,22 @@ export default function TodoList({ todos, onUpdate, onDelete }: TodoListProps) {
   const getStatusColor = (status: Todo['status']) => {
     switch (status) {
       case 'TODO':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-status-pending-bg text-status-pending-text';
       case 'IN_PROGRESS':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-status-in-progress-bg text-status-in-progress-text';
       case 'DONE':
-        return 'bg-green-100 text-green-800';
+        return 'bg-status-completed-bg text-status-completed-text';
     }
   };
 
   const getPriorityColor = (priority: Todo['priority']) => {
     switch (priority) {
       case 'LOW':
-        return 'text-gray-500';
+        return 'bg-priority-low-bg text-priority-low-text';
       case 'MEDIUM':
-        return 'text-yellow-600';
+        return 'bg-priority-medium-bg text-priority-medium-text';
       case 'HIGH':
-        return 'text-red-600';
+        return 'bg-priority-high-bg text-priority-high-text';
     }
   };
 
@@ -36,10 +36,10 @@ export default function TodoList({ todos, onUpdate, onDelete }: TodoListProps) {
       {todos.map((todo) => (
         <div
           key={todo.id}
-          className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+          className="bg-card p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
         >
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">{todo.title}</h3>
+            <h3 className="text-lg font-semibold text-card-foreground">{todo.title}</h3>
             <div className="flex gap-2">
               <span
                 className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
@@ -48,18 +48,18 @@ export default function TodoList({ todos, onUpdate, onDelete }: TodoListProps) {
               >
                 {todo.status.replace('_', ' ')}
               </span>
-              <span className={`text-sm font-medium ${getPriorityColor(todo.priority)}`}>
+              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(todo.priority)}`}>
                 {todo.priority}
               </span>
             </div>
           </div>
           
           {todo.description && (
-            <p className="text-gray-600 mb-4">{todo.description}</p>
+            <p className="text-muted-foreground mb-4">{todo.description}</p>
           )}
           
           <div className="flex justify-between items-center">
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               {todo.dueDate && (
                 <span>Due: {new Date(todo.dueDate).toLocaleDateString()}</span>
               )}
@@ -67,13 +67,13 @@ export default function TodoList({ todos, onUpdate, onDelete }: TodoListProps) {
             <div className="flex gap-2">
               <button
                 onClick={() => onUpdate(todo.id, todo)}
-                className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 Edit
               </button>
               <button
                 onClick={() => onDelete(todo.id, todo)}
-                className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="px-4 py-2 text-sm font-medium text-destructive hover:text-destructive/80 focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 Delete
               </button>

@@ -135,6 +135,22 @@
   --border: var(--color-neutral-200);
   --input: var(--color-neutral-200);
   --ring: var(--color-primary-600);
+
+  /* Todo Priority Colors */
+  --priority-low-bg: var(--color-neutral-100);
+  --priority-low-text: var(--color-neutral-700);
+  --priority-medium-bg: var(--color-primary-100);
+  --priority-medium-text: var(--color-primary-700);
+  --priority-high-bg: var(--color-error-100);
+  --priority-high-text: var(--color-error-700);
+
+  /* Todo Status Colors */
+  --status-pending-bg: var(--color-warning-50);
+  --status-pending-text: var(--color-warning-900);
+  --status-in-progress-bg: var(--color-primary-100);
+  --status-in-progress-text: var(--color-primary-700);
+  --status-completed-bg: var(--color-success-50);
+  --status-completed-text: var(--color-success-900);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -161,6 +177,22 @@
     --border: var(--color-neutral-800);
     --input: var(--color-neutral-800);
     --ring: var(--color-primary-500);
+
+    /* Todo Priority Colors - Dark Mode */
+    --priority-low-bg: var(--color-neutral-800);
+    --priority-low-text: var(--color-neutral-300);
+    --priority-medium-bg: var(--color-primary-900);
+    --priority-medium-text: var(--color-primary-300);
+    --priority-high-bg: var(--color-error-900);
+    --priority-high-text: var(--color-error-300);
+
+    /* Todo Status Colors - Dark Mode */
+    --status-pending-bg: var(--color-warning-900);
+    --status-pending-text: var(--color-warning-300);
+    --status-in-progress-bg: var(--color-primary-900);
+    --status-in-progress-text: var(--color-primary-300);
+    --status-completed-bg: var(--color-success-900);
+    --status-completed-text: var(--color-success-300);
   }
 }
 
