@@ -83,7 +83,7 @@ export async function ensureLoggedOut(page: Page) {
 // Test user credentials
 export const TEST_USER = {
   email: 'test@example.com',
-  password: 'Test123',
+  password: 'password123',  // Simplified to avoid backend special character issues
   username: 'testuser'
 };
 
@@ -98,6 +98,6 @@ export async function setupMockIfNeeded(page: Page) {
 // Alternative test user for multi-user scenarios
 export const TEST_USER_2 = {
   email: 'test2@example.com',
-  password: 'Test123',
+  password: 'password123',  // Simplified to avoid backend special character issues
   username: 'testuser2'
 };

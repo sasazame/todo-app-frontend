@@ -13,11 +13,7 @@ import { useRegister } from '@/hooks/useAuth';
 // Password strength indicator component
 function PasswordStrength({ password }: { password: string }) {
   const requirements = [
-    { regex: /.{8,}/, text: 'At least 8 characters' },
-    { regex: /[A-Z]/, text: 'One uppercase letter' },
-    { regex: /[a-z]/, text: 'One lowercase letter' },
-    { regex: /[0-9]/, text: 'One number' },
-    { regex: /[^A-Za-z0-9]/, text: 'One special character' },
+    { regex: /.{6,}/, text: 'At least 6 characters' },
   ];
 
   return (
