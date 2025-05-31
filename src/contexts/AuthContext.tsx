@@ -110,11 +110,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     dispatch({ type: 'AUTH_LOADING' });
     
     try {
-      await authAPI.register({ username, email, password });
+      const data = await authAPI.register({ username, email, password });
       
-      // For register, we just return success - user needs to login separately
-      dispatch({ type: 'AUTH_LOGOUT' });
-      showSuccess('Account created successfully! Please log in to continue.');
+      // Backend returns tokens on registration, so we can log the user in automatically
+      if (data.accessToken && data.refreshToken) {
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        dispatch({ type: 'AUTH_SUCCESS', payload: data.user });
+        showSuccess(`Welcome, ${data.user.username}! Account created successfully.`);
+      } else {
+        // Fallback if backend doesn't return tokens
+        dispatch({ type: 'AUTH_LOGOUT' });
+        showSuccess('Account created successfully! Please log in to continue.');
+      }
     } catch (error) {
       const message = getErrorMessage(error);
       dispatch({ type: 'AUTH_ERROR', payload: message });
@@ -156,10 +164,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const user = await authAPI.getCurrentUser();
       dispatch({ type: 'AUTH_SUCCESS', payload: user });
-    } catch {
+    } catch (error) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       dispatch({ type: 'AUTH_LOGOUT' });
+      
+      // Log error for debugging
+      console.error('Auth check failed:', error);
     }
   };
 

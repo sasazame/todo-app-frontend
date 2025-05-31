@@ -35,7 +35,8 @@ api.interceptors.response.use(
       
       // Redirect to login if not already there
       if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+        // Use replace to prevent going back to unauthorized page
+        window.location.replace('/login');
       }
     }
     return Promise.reject(error);

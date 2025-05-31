@@ -64,7 +64,9 @@ export default function RegisterPage() {
     try {
       clearError();
       await registerUser(data.username, data.email, data.password);
-      router.push('/login?registered=true');
+      // If registration automatically logs in, redirect to home
+      // Otherwise, redirect to login
+      router.push('/');
     } catch {
       // Error is already handled by the useRegister hook
     }
