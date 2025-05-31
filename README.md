@@ -107,10 +107,15 @@ git checkout -b feat/feature-name
 # バグ修正
 git checkout -b fix/bug-description
 
+# ローカルでテスト実行（PR前に必須）
+npm run type-check && npm run lint && npm test && npm run test:e2e
+
 # プルリクエスト作成
 git push origin feat/feature-name
 gh pr create --assignee sasazame
 ```
+
+> 📋 PRマージ要件の詳細は[PR要件ドキュメント](./docs/PR_REQUIREMENTS.md)を参照してください。
 
 ## 🧩 コンポーネント設計
 
@@ -195,6 +200,9 @@ export function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 ## 🧪 テスト
 
 ### テスト実行
+
+> ⚠️ **重要**: E2Eテストは現在CI環境で一時的に無効化されています。PRマージ前にローカルでE2Eテストを実行してください。詳細は[PR要件](./docs/PR_REQUIREMENTS.md)を参照。
+
 ```bash
 # 単体テスト
 npm test
@@ -205,7 +213,7 @@ npm run test:watch
 # カバレッジ
 npm run test:coverage
 
-# E2Eテスト
+# E2Eテスト（ローカル実行必須）
 npm run test:e2e
 
 # E2Eテスト（UIモード）
@@ -396,8 +404,12 @@ const filteredTodos = useMemo(() =>
 1. このリポジトリをフォーク
 2. feature ブランチを作成 (`git checkout -b feat/amazing-feature`)
 3. 変更をコミット (`git commit -m 'feat: 素晴らしい機能を追加'`)
-4. ブランチにプッシュ (`git push origin feat/amazing-feature`)
-5. プルリクエストを作成
+4. ローカルでテスト実行（必須）:
+   ```bash
+   npm run type-check && npm run lint && npm test && npm run test:e2e
+   ```
+5. ブランチにプッシュ (`git push origin feat/amazing-feature`)
+6. プルリクエストを作成（[PR要件](./docs/PR_REQUIREMENTS.md)を確認）
 
 ---
 

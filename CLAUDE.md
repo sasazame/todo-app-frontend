@@ -16,7 +16,10 @@ git checkout -b feat/feature-name
 npm run type-check && npm run lint && npm test && npm run build
 git add . && git commit -m "feat: 機能の説明"
 
-# 3. GitHubにプッシュしてPRを作成（CI自動実行）
+# 3. ローカルでE2Eテスト実行（CI無効化のため必須）
+npm run test:e2e  # 最低限 npm run test:e2e:smoke は必須
+
+# 4. GitHubにプッシュしてPRを作成（CI自動実行）
 git push origin feat/feature-name
 gh pr create --title "機能タイトル" --body "詳細説明" --assignee sasazame
 ```
@@ -25,6 +28,7 @@ gh pr create --title "機能タイトル" --body "詳細説明" --assignee sasaz
 - **自動実行**: PR作成時・push時
 - **必須チェック**: type-check, lint, test, build
 - **テスト**: 19スイート・233テスト（全パス状態維持）
+- **E2Eテスト**: ⚠️ CI環境で一時無効化中（[Issue #24](https://github.com/sasazame/todo-app-frontend/issues/24)）
 - **デプロイ**: mainブランチ → Vercel自動デプロイ
 
 ## コーディング規約
@@ -112,7 +116,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - [ ] テスト作成（実際の動作に合わせる）
 - [ ] **CI同等チェック**: `type-check && lint && test && build`
 - [ ] 全233テスト成功確認
-- [ ] PR作成（assignee: sasazame）
+- [ ] **ローカルE2Eテスト実行**（必須）: `npm run test:e2e`
+- [ ] PR作成（assignee: sasazame）、[PR要件](./docs/PR_REQUIREMENTS.md)確認
 
 ## 開発コマンド
 ```bash
@@ -147,17 +152,25 @@ npm run type-check && npm run lint && npm test && npm run build
    - モーダルテスト: DOM構造での特定方法
    - 非同期テスト: `waitFor`+適切なセレクタ
 
+4. **E2Eテスト問題** ⚠️
+   - CI環境で一時無効化中（[Issue #24](https://github.com/sasazame/todo-app-frontend/issues/24)）
+   - ローカルでのE2Eテスト実行が必須
+   - バックエンド起動確認: `http://localhost:8080`
+
 ### 修正手順
 ```bash
 # 1. ローカルでCI同等テスト
 npm run type-check && npm run lint && npm test && npm run build
 
-# 2. エラーが出たら原因特定
+# 2. E2Eテスト実行（必須）
+npm run test:e2e  # または npm run test:e2e:smoke
+
+# 3. エラーが出たら原因特定
 npm test -- --verbose  # 詳細テスト結果
 npm run lint -- --debug  # ESLint詳細
 
-# 3. 修正後、再度テスト実行
-# 4. 全パス確認後にpush
+# 4. 修正後、再度テスト実行
+# 5. 全パス確認後にpush
 ```
 
 このファイルはClaude Codeが効率的に作業するための簡潔なガイドライン。
