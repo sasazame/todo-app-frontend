@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, UserPlus, Check, X } from 'lucide-react';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
-import { useRegister } from '@/hooks/useAuth';
+import { useRegister, useAuth } from '@/hooks/useAuth';
 
 // Password strength indicator component
 function PasswordStrength({ password }: { password: string }) {
@@ -44,6 +44,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const { register: registerUser, isLoading, clearError } = useRegister();
+  const { isAuthenticated } = useAuth();
 
   const {
     register,
@@ -56,13 +57,18 @@ export default function RegisterPage() {
 
   const password = watch('password', '');
 
+  // Redirect when authenticated (after successful registration)
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
+
   const onSubmit = async (data: RegisterFormData) => {
     try {
       clearError();
       await registerUser(data.username, data.email, data.password);
-      // If registration automatically logs in, redirect to home
-      // Otherwise, redirect to login
-      router.push('/');
+      // Redirect will happen automatically via useEffect when isAuthenticated becomes true
     } catch {
       // Error is already handled by the useRegister hook
     }
