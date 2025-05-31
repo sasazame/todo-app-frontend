@@ -12,13 +12,20 @@ TODOアプリケーション - フロントエンド
 # 1. 新機能開発時はfeatブランチを作成
 git checkout -b feat/feature-name
 
-# 2. 実装・テスト・コミット
-npm run lint && npm test && git add . && git commit -m "feat: 機能の説明"
+# 2. 実装・テスト・コミット（CIと同等のチェック必須）
+npm run type-check && npm run lint && npm test && npm run build
+git add . && git commit -m "feat: 機能の説明"
 
-# 3. GitHubにプッシュしてPRを作成（宛先: sasazame）
+# 3. GitHubにプッシュしてPRを作成（CI自動実行）
 git push origin feat/feature-name
 gh pr create --title "機能タイトル" --body "詳細説明" --assignee sasazame
 ```
+
+## CI/CD パイプライン ✅
+- **自動実行**: PR作成時・push時
+- **必須チェック**: type-check, lint, test, build
+- **テスト**: 19スイート・233テスト（全パス状態維持）
+- **デプロイ**: mainブランチ → Vercel自動デプロイ
 
 ## コーディング規約
 
@@ -62,10 +69,11 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 **タイプ**: feat, fix, docs, style, refactor, perf, test, chore
 
 ## テスト方針
-- 単体: Jest + RTL（ユーティリティ、フック）
-- 統合: RTL（ユーザーインタラクション）
-- E2E: Playwright（クリティカルパス）
-- AAA パターン、ユーザー視点でテスト
+- **単体**: Jest + RTL（ユーティリティ、フック）
+- **統合**: RTL（ユーザーインタラクション）
+- **E2E**: Playwright（クリティカルパス）
+- **設定**: Jest除外設定（Playwright: `*.spec.ts`）
+- **品質**: AAA パターン、ユーザー視点、型安全性重視
 
 ## API連携
 - バックエンドURL: `http://localhost:8080/api/v1`
@@ -96,28 +104,61 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## 開発時チェックリスト
 - [ ] featブランチで作業
-- [ ] TypeScript型安全性
+- [ ] TypeScript型安全性（`any`禁止）
 - [ ] Server/Client Components適切な分離
 - [ ] レスポンシブデザイン
 - [ ] アクセシビリティ（a11y）
 - [ ] エラーハンドリング
-- [ ] テスト作成
-- [ ] lint/build成功
+- [ ] テスト作成（実際の動作に合わせる）
+- [ ] **CI同等チェック**: `type-check && lint && test && build`
+- [ ] 全233テスト成功確認
 - [ ] PR作成（assignee: sasazame）
 
 ## 開発コマンド
 ```bash
 npm run dev          # 開発サーバー（Turbopack）
 npm run build        # プロダクションビルド
+npm run type-check   # TypeScript型チェック
 npm run lint         # ESLint実行
 npm test             # Jest単体テスト
 npm run test:e2e     # Playwright E2Eテスト
+
+# CI同等チェック（必須）
+npm run type-check && npm run lint && npm test && npm run build
 ```
 
 ## 環境・設定
 - Node.js 18+, npm 9+
 - バックエンド連携: localhost:8080
 - 主要パッケージ: package.jsonを参照
+
+## CI/CDトラブルシューティング
+### よくある問題と解決法
+1. **Jest + Playwright競合**
+   - `jest.config.js`で`testPathIgnorePatterns: ['*.spec.ts']`
+   - E2Eテストは`npm run test:e2e`で個別実行
+
+2. **TypeScript型エラー**
+   - `any`禁止→`unknown`+型ガード使用
+   - CVA: `defaultVariants`のundefined対応
+
+3. **テスト失敗パターン**
+   - UIテスト: 実際のCSS出力に合わせる
+   - モーダルテスト: DOM構造での特定方法
+   - 非同期テスト: `waitFor`+適切なセレクタ
+
+### 修正手順
+```bash
+# 1. ローカルでCI同等テスト
+npm run type-check && npm run lint && npm test && npm run build
+
+# 2. エラーが出たら原因特定
+npm test -- --verbose  # 詳細テスト結果
+npm run lint -- --debug  # ESLint詳細
+
+# 3. 修正後、再度テスト実行
+# 4. 全パス確認後にpush
+```
 
 このファイルはClaude Codeが効率的に作業するための簡潔なガイドライン。
 詳細な設計情報は`README.md`および`docs/`フォルダーを参照。
