@@ -1,12 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { login, TEST_USER, setupMockIfNeeded } from './helpers/auth';
+import { login, TEST_USER } from './helpers/auth';
 import { waitForApp } from './helpers/setup';
 
 test.describe('Todo Basic Operations', () => {
   test.beforeEach(async ({ page }) => {
-    // Setup mocks if needed
-    await setupMockIfNeeded(page);
-    
     // Login before each test (user should already exist)
     await page.goto('/login');
     await waitForApp(page);
@@ -57,8 +54,8 @@ test.describe('Todo Basic Operations', () => {
     // Submit
     await page.click('button:has-text("Create Todo")');
     
-    // Wait for todo to appear
-    await expect(page.locator(`text=${title}`)).toBeVisible({ timeout: 10000 });
+    // Wait for todo to appear in the list
+    await expect(page.locator('h3').filter({ hasText: title })).toBeVisible({ timeout: 10000 });
   });
 
   test('should delete a todo', async ({ page }) => {
@@ -71,10 +68,10 @@ test.describe('Todo Basic Operations', () => {
     await page.click('button:has-text("Create Todo")');
     
     // Wait for todo to appear
-    await expect(page.locator(`text=${title}`)).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: title })).toBeVisible();
     
     // Find and click delete button for this todo
-    const todoItem = page.locator(`text=${title}`).locator('..').locator('..');
+    const todoItem = page.locator('h3').filter({ hasText: title }).locator('..').locator('..');
     await todoItem.locator('button:has-text("Delete")').click();
     
     // Confirm deletion
@@ -82,7 +79,7 @@ test.describe('Todo Basic Operations', () => {
     await page.locator('.fixed button:has-text("Delete")').last().click();
     
     // Wait for todo to disappear
-    await expect(page.locator(`text=${title}`)).not.toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h3').filter({ hasText: title })).not.toBeVisible({ timeout: 10000 });
   });
 
   test('should update todo status', async ({ page }) => {
@@ -95,10 +92,10 @@ test.describe('Todo Basic Operations', () => {
     await page.click('button:has-text("Create Todo")');
     
     // Wait for todo to appear
-    await expect(page.locator(`text=${title}`)).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: title })).toBeVisible();
     
     // Click edit button
-    const todoItem = page.locator(`text=${title}`).locator('..').locator('..');
+    const todoItem = page.locator('h3').filter({ hasText: title }).locator('..').locator('..');
     await todoItem.locator('button:has-text("Edit")').click();
     
     // Wait for edit form

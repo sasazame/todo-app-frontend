@@ -32,9 +32,9 @@ export const handlers = [
     
     if (body.email === 'test@example.com' && body.password === 'Test123') {
       return HttpResponse.json({
-        user: mockUser,
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
+        user: mockUser,
       });
     }
     
