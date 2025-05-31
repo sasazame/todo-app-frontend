@@ -48,13 +48,11 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-1">
-              Title *
-            </label>
             <Input
               {...register('title', { required: 'Title is required' })}
               type="text"
               id="title"
+              label="Title *"
             />
             {errors.title && (
               <p className="mt-1 text-sm text-destructive">{errors.title.message}</p>
@@ -62,13 +60,11 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-1">
-              Description
-            </label>
             <TextArea
               {...register('description')}
               id="description"
               rows={3}
+              label="Description"
             />
           </div>
 
@@ -105,13 +101,11 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
           </div>
 
           <div>
-            <label htmlFor="dueDate" className="block text-sm font-medium mb-1">
-              Due Date
-            </label>
             <Input
               {...register('dueDate')}
               type="date"
               id="dueDate"
+              label="Due Date"
             />
           </div>
 

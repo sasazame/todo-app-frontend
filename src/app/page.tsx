@@ -173,7 +173,7 @@ function TodoApp() {
                   Cancel
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant="danger"
                   onClick={confirmDelete}
                   disabled={deleteMutation.isPending}
                 >
