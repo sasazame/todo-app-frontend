@@ -7,11 +7,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 focus:ring-primary',
-        secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 focus:ring-secondary',
-        ghost: 'text-foreground hover:bg-accent hover:text-accent-foreground focus:ring-accent',
-        danger: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 focus:ring-destructive',
-        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground focus:ring-accent',
+        primary: 'bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:ring-primary border border-primary/20',
+        secondary: 'bg-secondary text-secondary-foreground shadow-md hover:bg-secondary/80 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:ring-secondary border border-secondary/30',
+        ghost: 'text-foreground hover:bg-accent hover:text-accent-foreground hover:shadow-sm hover:scale-[1.02] active:scale-[0.98] focus:ring-accent border border-transparent hover:border-accent/30',
+        danger: 'bg-destructive text-destructive-foreground shadow-md hover:bg-destructive/90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:ring-destructive border border-destructive/20',
+        outline: 'border-2 border-primary bg-background text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md hover:scale-[1.02] active:scale-[0.98] focus:ring-primary',
       },
       size: {
         sm: 'h-8 px-3 text-sm',

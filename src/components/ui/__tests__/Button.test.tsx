@@ -10,7 +10,7 @@ describe('Button', () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass('inline-flex', 'items-center', 'justify-center');
     expect(button).toHaveClass('h-10', 'px-4', 'text-sm'); // md size (default)
-    expect(button).toHaveClass('bg-primary'); // primary variant (default)
+    expect(button).toHaveClass('bg-primary', 'border'); // primary variant (default)
   });
 
   it('renders different variants correctly', () => {
@@ -24,7 +24,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('bg-destructive');
 
     rerender(<Button variant="outline">Outline</Button>);
-    expect(screen.getByRole('button')).toHaveClass('border', 'border-input');
+    expect(screen.getByRole('button')).toHaveClass('border-2', 'border-primary');
   });
 
   it('renders different sizes correctly', () => {
