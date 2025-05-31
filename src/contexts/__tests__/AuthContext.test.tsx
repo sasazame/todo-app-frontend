@@ -95,6 +95,9 @@ describe('AuthContext', () => {
     });
 
     it('handles invalid token on mount', async () => {
+      // Suppress expected console.error for this test
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      
       localStorageMock.getItem.mockReturnValue('invalid-token');
       mockedAuthAPI.getCurrentUser.mockRejectedValue(new AuthAPIError('Invalid token'));
 
@@ -108,6 +111,9 @@ describe('AuthContext', () => {
       expect(result.current.user).toBe(null);
       expect(localStorageMock.removeItem).toHaveBeenCalledWith('accessToken');
       expect(localStorageMock.removeItem).toHaveBeenCalledWith('refreshToken');
+      
+      // Restore console.error
+      consoleErrorSpy.mockRestore();
     });
   });
 
@@ -192,7 +198,8 @@ describe('AuthContext', () => {
     it('successfully registers user', async () => {
       const registerResponse = {
         user: mockUser,
-        message: 'Registration successful',
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
       };
       mockedAuthAPI.register.mockResolvedValue(registerResponse);
 
@@ -207,8 +214,11 @@ describe('AuthContext', () => {
         email: 'test@example.com',
         password: 'password',
       });
-      expect(result.current.isAuthenticated).toBe(false);
-      expect(result.current.user).toBe(null);
+      // After successful registration with tokens, user should be authenticated
+      expect(result.current.isAuthenticated).toBe(true);
+      expect(result.current.user).toEqual(mockUser);
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('accessToken', 'mock-access-token');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('refreshToken', 'mock-refresh-token');
       expect(result.current.error).toBe(null);
     });
 

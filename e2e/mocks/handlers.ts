@@ -30,11 +30,11 @@ export const handlers = [
   http.post(`${API_URL}/auth/login`, async ({ request }) => {
     const body = await request.json() as { email: string; password: string };
     
-    if (body.email === 'test@example.com' && body.password === 'Test123!@#') {
+    if (body.email === 'test@example.com' && body.password === 'password123') {
       return HttpResponse.json({
-        user: mockUser,
         accessToken: 'mock-access-token',
         refreshToken: 'mock-refresh-token',
+        user: mockUser,
       });
     }
     
@@ -48,7 +48,8 @@ export const handlers = [
     const body = await request.json() as { username: string; email: string; password: string };
     
     return HttpResponse.json({
-      message: 'User registered successfully',
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
       user: {
         ...mockUser,
         username: body.username,
@@ -85,7 +86,7 @@ export const handlers = [
       );
     }
     
-    return HttpResponse.json(todos);
+    return HttpResponse.json({ content: todos });
   }),
 
   http.post(`${API_URL}/todos`, async ({ request }) => {

@@ -62,11 +62,20 @@ export function GuestGuard({
   }, [isAuthenticated, isLoading, router, redirectTo]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-gray-600">Loading...</div>
+      </div>
+    );
   }
 
   if (isAuthenticated) {
-    return null;
+    // Still show loading while redirecting
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg text-gray-600">Redirecting...</div>
+      </div>
+    );
   }
 
   return <>{children}</>;

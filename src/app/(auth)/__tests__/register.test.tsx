@@ -99,11 +99,7 @@ describe('RegisterPage', () => {
 
     // Should show requirements
     expect(screen.getByText(/password requirements/i)).toBeInTheDocument();
-    expect(screen.getByText(/at least 8 characters/i)).toBeInTheDocument();
-    expect(screen.getByText(/one uppercase letter/i)).toBeInTheDocument();
-    expect(screen.getByText(/one lowercase letter/i)).toBeInTheDocument();
-    expect(screen.getByText(/one number/i)).toBeInTheDocument();
-    expect(screen.getByText(/one special character/i)).toBeInTheDocument();
+    expect(screen.getByText(/at least 6 characters/i)).toBeInTheDocument();
   });
 
   it('validates password confirmation', async () => {
@@ -209,12 +205,13 @@ describe('RegisterPage', () => {
         createdAt: '2024-01-01T00:00:00Z',
         updatedAt: '2024-01-01T00:00:00Z',
       },
-      message: 'Registration successful',
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
     });
 
-    // Wait for redirect
+    // Wait for redirect to home page (auto-login after registration)
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/login?registered=true');
+      expect(mockPush).toHaveBeenCalledWith('/');
     });
   });
 
@@ -243,18 +240,8 @@ describe('RegisterPage', () => {
     const requirements = screen.getByText(/password requirements/i).parentElement;
     expect(requirements).toBeInTheDocument();
     
-    // All requirements should be marked as valid
-    const requirementTexts = [
-      /at least 8 characters/i,
-      /one uppercase letter/i,
-      /one lowercase letter/i,
-      /one number/i,
-      /one special character/i,
-    ];
-
-    requirementTexts.forEach(text => {
-      const element = screen.getByText(text);
-      expect(element).toHaveClass('text-success-500');
-    });
+    // Only one requirement now: minimum length
+    const requirementText = screen.getByText(/at least 6 characters/i);
+    expect(requirementText).toHaveClass('text-success-500');
   });
 });

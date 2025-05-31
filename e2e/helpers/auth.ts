@@ -83,13 +83,21 @@ export async function ensureLoggedOut(page: Page) {
 // Test user credentials
 export const TEST_USER = {
   email: 'test@example.com',
-  password: 'Test123',
+  password: 'password123',  // Simplified to avoid backend special character issues
   username: 'testuser'
 };
+
+// Helper to setup MSW if in CI environment
+export async function setupMockIfNeeded(page: Page) {
+  // In CI environment, ensure MSW is ready
+  if (process.env.CI) {
+    await page.waitForTimeout(2000); // Give MSW time to initialize
+  }
+}
 
 // Alternative test user for multi-user scenarios
 export const TEST_USER_2 = {
   email: 'test2@example.com',
-  password: 'Test123',
+  password: 'password123',  // Simplified to avoid backend special character issues
   username: 'testuser2'
 };

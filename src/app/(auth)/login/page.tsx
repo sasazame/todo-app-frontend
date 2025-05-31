@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LogIn, CheckCircle } from 'lucide-react';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
-import { useLogin } from '@/hooks/useAuth';
+import { useLogin, useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +17,7 @@ export default function LoginPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   
   const { login, isLoading, clearError } = useLogin();
+  const { isAuthenticated } = useAuth();
 
   const {
     register,
@@ -33,15 +34,20 @@ export default function LoginPage() {
     }
   }, [searchParams]);
 
+  // Redirect when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const redirectParam = searchParams.get('redirect');
+      const redirectTo = redirectParam ? decodeURIComponent(redirectParam) : '/';
+      router.push(redirectTo);
+    }
+  }, [isAuthenticated, router, searchParams]);
+
   const onSubmit = async (data: LoginFormData) => {
     try {
       clearError();
       await login(data.email, data.password);
-      
-      // Redirect to intended page or home
-      const redirectParam = searchParams.get('redirect');
-      const redirectTo = redirectParam ? decodeURIComponent(redirectParam) : '/';
-      router.push(redirectTo);
+      // Redirect will happen automatically via useEffect when isAuthenticated becomes true
     } catch {
       // Error is already handled by the useLogin hook
     }

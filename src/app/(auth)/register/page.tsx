@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -8,16 +8,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, UserPlus, Check, X } from 'lucide-react';
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
-import { useRegister } from '@/hooks/useAuth';
+import { useRegister, useAuth } from '@/hooks/useAuth';
 
 // Password strength indicator component
 function PasswordStrength({ password }: { password: string }) {
   const requirements = [
-    { regex: /.{8,}/, text: 'At least 8 characters' },
-    { regex: /[A-Z]/, text: 'One uppercase letter' },
-    { regex: /[a-z]/, text: 'One lowercase letter' },
-    { regex: /[0-9]/, text: 'One number' },
-    { regex: /[^A-Za-z0-9]/, text: 'One special character' },
+    { regex: /.{6,}/, text: 'At least 6 characters' },
   ];
 
   return (
@@ -48,6 +44,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const { register: registerUser, isLoading, clearError } = useRegister();
+  const { isAuthenticated } = useAuth();
 
   const {
     register,
@@ -60,11 +57,18 @@ export default function RegisterPage() {
 
   const password = watch('password', '');
 
+  // Redirect when authenticated (after successful registration)
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
+
   const onSubmit = async (data: RegisterFormData) => {
     try {
       clearError();
       await registerUser(data.username, data.email, data.password);
-      router.push('/login?registered=true');
+      // Redirect will happen automatically via useEffect when isAuthenticated becomes true
     } catch {
       // Error is already handled by the useRegister hook
     }

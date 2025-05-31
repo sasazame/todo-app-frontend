@@ -54,8 +54,8 @@ test.describe('Todo Basic Operations', () => {
     // Submit
     await page.click('button:has-text("Create Todo")');
     
-    // Wait for todo to appear
-    await expect(page.locator(`text=${title}`)).toBeVisible({ timeout: 10000 });
+    // Wait for todo to appear in the list
+    await expect(page.locator('h3').filter({ hasText: title })).toBeVisible({ timeout: 10000 });
   });
 
   test('should delete a todo', async ({ page }) => {
@@ -68,10 +68,10 @@ test.describe('Todo Basic Operations', () => {
     await page.click('button:has-text("Create Todo")');
     
     // Wait for todo to appear
-    await expect(page.locator(`text=${title}`)).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: title })).toBeVisible();
     
     // Find and click delete button for this todo
-    const todoItem = page.locator(`text=${title}`).locator('..').locator('..');
+    const todoItem = page.locator('h3').filter({ hasText: title }).locator('..').locator('..');
     await todoItem.locator('button:has-text("Delete")').click();
     
     // Confirm deletion
@@ -79,7 +79,7 @@ test.describe('Todo Basic Operations', () => {
     await page.locator('.fixed button:has-text("Delete")').last().click();
     
     // Wait for todo to disappear
-    await expect(page.locator(`text=${title}`)).not.toBeVisible({ timeout: 10000 });
+    await expect(page.locator('h3').filter({ hasText: title })).not.toBeVisible({ timeout: 10000 });
   });
 
   test('should update todo status', async ({ page }) => {
@@ -92,22 +92,22 @@ test.describe('Todo Basic Operations', () => {
     await page.click('button:has-text("Create Todo")');
     
     // Wait for todo to appear
-    await expect(page.locator(`text=${title}`)).toBeVisible();
+    await expect(page.locator('h3').filter({ hasText: title })).toBeVisible();
     
     // Click edit button
-    const todoItem = page.locator(`text=${title}`).locator('..').locator('..');
+    const todoItem = page.locator('h3').filter({ hasText: title }).locator('..').locator('..');
     await todoItem.locator('button:has-text("Edit")').click();
     
     // Wait for edit form
     await expect(page.locator('h2:has-text("Edit Todo")')).toBeVisible();
     
     // Change status
-    await page.selectOption('select[name="status"]', 'COMPLETED');
+    await page.selectOption('select[name="status"]', 'DONE');
     
     // Save
     await page.click('button:has-text("Update Todo")');
     
     // Verify status changed (look for visual indicator)
-    await expect(todoItem.locator('text=COMPLETED')).toBeVisible({ timeout: 10000 });
+    await expect(todoItem.locator('text=DONE')).toBeVisible({ timeout: 10000 });
   });
 });
