@@ -192,7 +192,8 @@ describe('AuthContext', () => {
     it('successfully registers user', async () => {
       const registerResponse = {
         user: mockUser,
-        message: 'Registration successful',
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
       };
       mockedAuthAPI.register.mockResolvedValue(registerResponse);
 

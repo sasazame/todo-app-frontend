@@ -160,7 +160,8 @@ describe('useAuth hooks', () => {
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
         },
-        message: 'Registration successful',
+        accessToken: 'mock-access-token',
+        refreshToken: 'mock-refresh-token',
       };
       mockedAuthAPI.register.mockResolvedValue(mockResponse);
 
@@ -221,7 +222,8 @@ describe('useAuth hooks', () => {
             createdAt: '2024-01-01T00:00:00Z',
             updatedAt: '2024-01-01T00:00:00Z',
           },
-          message: 'Success',
+          accessToken: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
         });
       });
 
