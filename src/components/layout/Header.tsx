@@ -1,8 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useAuth, useLogout } from '@/hooks/useAuth';
 import { Button } from '@/components/ui';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Settings } from 'lucide-react';
 
 export function Header() {
   const { user, isAuthenticated } = useAuth();
@@ -29,6 +30,16 @@ export function Header() {
             <span className="font-medium">{user.username}</span>
             <span className="text-muted-foreground">({user.email})</span>
           </div>
+          
+          <Link href="/profile">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<Settings className="h-4 w-4" />}
+            >
+              Profile
+            </Button>
+          </Link>
           
           <Button
             variant="outline"
