@@ -30,3 +30,4 @@ export {
   type ModalContentProps,
   type ModalFooterProps
 } from './Modal';
+export { ThemeToggle } from './ThemeToggle';

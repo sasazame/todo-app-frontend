@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Header } from '../Header';
 import { useAuth, useLogout } from '@/hooks/useAuth';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 jest.mock('@/hooks/useAuth');
 
@@ -15,6 +16,14 @@ const mockUser = {
 
 describe('Header', () => {
   const mockLogout = jest.fn();
+
+  const renderWithTheme = (ui: React.ReactElement) => {
+    return render(
+      <ThemeProvider>
+        {ui}
+      </ThemeProvider>
+    );
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -30,7 +39,7 @@ describe('Header', () => {
       isAuthenticated: false,
     });
 
-    const { container } = render(<Header />);
+    const { container } = renderWithTheme(<Header />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -40,7 +49,7 @@ describe('Header', () => {
       isAuthenticated: true,
     });
 
-    render(<Header />);
+    renderWithTheme(<Header />);
 
     expect(screen.getByText('TODO App')).toBeInTheDocument();
     expect(screen.getByText(mockUser.username)).toBeInTheDocument();
@@ -53,7 +62,7 @@ describe('Header', () => {
       isAuthenticated: true,
     });
 
-    render(<Header />);
+    renderWithTheme(<Header />);
 
     const profileLink = screen.getByRole('link', { name: /profile/i });
     expect(profileLink).toHaveAttribute('href', '/profile');
@@ -66,7 +75,7 @@ describe('Header', () => {
       isAuthenticated: true,
     });
 
-    render(<Header />);
+    renderWithTheme(<Header />);
 
     const logoutButton = screen.getByRole('button', { name: /logout/i });
     await user.click(logoutButton);
@@ -84,7 +93,7 @@ describe('Header', () => {
       isLoading: true,
     });
 
-    render(<Header />);
+    renderWithTheme(<Header />);
 
     const logoutButton = screen.getByRole('button', { name: /logout/i });
     expect(logoutButton).toBeDisabled();

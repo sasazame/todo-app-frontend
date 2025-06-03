@@ -5,6 +5,7 @@ import Home from '../page';
 import { todoApi } from '@/lib/api';
 import { Todo } from '@/types/todo';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 jest.mock('@/lib/api');
 
@@ -67,9 +68,11 @@ function renderWithQuery(component: React.ReactElement) {
   });
   return render(
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        {component}
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          {component}
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
