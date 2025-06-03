@@ -22,8 +22,9 @@ export function ThemeToggle() {
       <span
         className={cn(
           'inline-block h-6 w-6 transform rounded-full',
-          'bg-white shadow-lg',
-          'transition-transform duration-300 ease-in-out',
+          'bg-white dark:bg-neutral-900 shadow-lg',
+          'transition-all duration-300 ease-in-out',
+          'border-2 border-neutral-300 dark:border-neutral-600',
           theme === 'dark' ? 'translate-x-7' : 'translate-x-1'
         )}
       >
@@ -37,6 +38,7 @@ export function ThemeToggle() {
         className={cn(
           'absolute left-1.5 h-4 w-4',
           'transition-opacity duration-300',
+          'text-yellow-500',
           theme === 'light' ? 'opacity-100' : 'opacity-0'
         )}
         fill="currentColor"
@@ -55,6 +57,7 @@ export function ThemeToggle() {
         className={cn(
           'absolute right-1.5 h-4 w-4',
           'transition-opacity duration-300',
+          'text-slate-200',
           theme === 'dark' ? 'opacity-100' : 'opacity-0'
         )}
         fill="currentColor"
