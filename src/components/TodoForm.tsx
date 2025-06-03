@@ -12,9 +12,10 @@ interface TodoFormProps {
   onSubmit: (data: CreateTodoDto) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
+  parentId?: number | null;
 }
 
-export default function TodoForm({ onSubmit, onCancel, isSubmitting }: TodoFormProps) {
+export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }: TodoFormProps) {
   const {
     register,
     handleSubmit,
@@ -23,6 +24,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting }: TodoFormP
     defaultValues: {
       status: 'TODO',
       priority: 'MEDIUM',
+      parentId: parentId || undefined,
     },
   });
 
@@ -40,7 +42,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting }: TodoFormP
   return (
     <Modal open={true} onClose={onCancel}>
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Create New Todo</h2>
+        <h2 className="text-xl font-semibold">{parentId ? 'Create Subtask' : 'Create New Todo'}</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>

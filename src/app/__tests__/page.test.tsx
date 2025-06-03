@@ -112,7 +112,18 @@ describe('Home Page', () => {
   });
 
   it('displays todos when loaded', async () => {
-    (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: mockTodos,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 2,
+      totalPages: 1,
+      first: true,
+      last: true
+    });
     
     renderWithQuery(<Home />);
     
@@ -123,7 +134,18 @@ describe('Home Page', () => {
   });
 
   it('shows empty state when no todos', async () => {
-    (todoApi.getAll as jest.Mock).mockResolvedValue([]);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: [],
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 0,
+      totalPages: 0,
+      first: true,
+      last: true
+    });
     
     renderWithQuery(<Home />);
     
@@ -144,7 +166,18 @@ describe('Home Page', () => {
 
   it('opens add todo form when button clicked', async () => {
     const user = userEvent.setup();
-    (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: mockTodos,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 2,
+      totalPages: 1,
+      first: true,
+      last: true
+    });
     
     renderWithQuery(<Home />);
     
@@ -162,7 +195,18 @@ describe('Home Page', () => {
     const user = userEvent.setup();
     const newTodo = { ...mockTodos[0], id: 3, title: 'New Todo' };
     
-    (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: mockTodos,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 2,
+      totalPages: 1,
+      first: true,
+      last: true
+    });
     (todoApi.create as jest.Mock).mockResolvedValue(newTodo);
     
     renderWithQuery(<Home />);
@@ -186,7 +230,18 @@ describe('Home Page', () => {
   });
 
   it('deletes a todo with confirmation', async () => {
-    (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: mockTodos,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 2,
+      totalPages: 1,
+      first: true,
+      last: true
+    });
     (todoApi.delete as jest.Mock).mockResolvedValue(undefined);
     
     renderWithQuery(<Home />);
@@ -215,7 +270,18 @@ describe('Home Page', () => {
   });
 
   it('cancels delete when not confirmed', async () => {
-    (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: mockTodos,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 2,
+      totalPages: 1,
+      first: true,
+      last: true
+    });
     
     renderWithQuery(<Home />);
     
@@ -243,7 +309,18 @@ describe('Home Page', () => {
   });
 
   it('opens edit form when Edit button clicked', async () => {
-    (todoApi.getAll as jest.Mock).mockResolvedValue(mockTodos);
+    (todoApi.getAll as jest.Mock).mockResolvedValue({
+      content: mockTodos,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 20,
+        sort: { sorted: true, orderBy: 'createdAt', direction: 'DESC' }
+      },
+      totalElements: 2,
+      totalPages: 1,
+      first: true,
+      last: true
+    });
     
     renderWithQuery(<Home />);
     

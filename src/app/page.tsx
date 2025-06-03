@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import TodoList from '@/components/TodoList';
+import TodoItem from '@/components/TodoItem';
 import TodoForm from '@/components/TodoForm';
 import TodoEditForm from '@/components/TodoEditForm';
+import TodoStatusFilter from '@/components/TodoStatusFilter';
 import { AuthGuard } from '@/components/auth';
 import { Header } from '@/components/layout';
 import { todoApi } from '@/lib/api';
-import { Todo, CreateTodoDto, UpdateTodoDto } from '@/types/todo';
+import { Todo, CreateTodoDto, UpdateTodoDto, TodoStatus } from '@/types/todo';
 import { showSuccess, showError } from '@/components/ui/toast';
 import { Modal, Button } from '@/components/ui';
 
@@ -17,17 +18,40 @@ function TodoApp() {
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [deletingTodo, setDeletingTodo] = useState<Todo | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<TodoStatus | 'ALL'>('ALL');
+  const [parentIdForNewTodo, setParentIdForNewTodo] = useState<number | null>(null);
 
-  const { data: todos = [], isLoading, error } = useQuery({
-    queryKey: ['todos'],
-    queryFn: todoApi.getAll,
+  const { data: todosResponse, isLoading, error } = useQuery({
+    queryKey: ['todos', selectedStatus],
+    queryFn: async () => {
+      if (selectedStatus === 'ALL') {
+        return todoApi.getAll();
+      } else {
+        const statusTodos = await todoApi.getByStatus(selectedStatus);
+        return {
+          content: statusTodos,
+          pageable: {
+            pageNumber: 0,
+            pageSize: statusTodos.length,
+            sort: { sorted: false },
+          },
+          totalElements: statusTodos.length,
+          totalPages: 1,
+          first: true,
+          last: true,
+        };
+      }
+    },
   });
+
+  const todos = todosResponse?.content || [];
 
   const createMutation = useMutation({
     mutationFn: todoApi.create,
     onSuccess: (newTodo) => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       setIsAddingTodo(false);
+      setParentIdForNewTodo(null);
       showSuccess(`Todo "${newTodo.title}" created successfully!`);
     },
     onError: (error) => {
@@ -62,7 +86,7 @@ function TodoApp() {
   });
 
   const handleCreate = (data: CreateTodoDto) => {
-    createMutation.mutate(data);
+    createMutation.mutate({ ...data, parentId: parentIdForNewTodo });
   };
 
   const handleUpdate = (id: number, todo: Todo) => {
@@ -87,6 +111,11 @@ function TodoApp() {
 
   const cancelDelete = () => {
     setDeletingTodo(null);
+  };
+
+  const handleAddChild = (parentId: number) => {
+    setParentIdForNewTodo(parentId);
+    setIsAddingTodo(true);
   };
 
   // Handle Escape key for delete modal
@@ -123,28 +152,51 @@ function TodoApp() {
     <div className="min-h-screen bg-background">
         <Header />
         <main className="container py-8">
-          <div className="mb-6">
-          <button
-            onClick={() => setIsAddingTodo(true)}
-            className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            Add New Todo
-          </button>
-        </div>
+          <div className="mb-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => {
+                  setParentIdForNewTodo(null);
+                  setIsAddingTodo(true);
+                }}
+                className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                Add New Todo
+              </button>
+            </div>
+            <TodoStatusFilter
+              selectedStatus={selectedStatus}
+              onStatusChange={setSelectedStatus}
+            />
+          </div>
 
         {todos.length === 0 ? (
           <div className="text-center py-12 bg-card rounded-lg shadow">
             <p className="text-muted-foreground text-lg">No todos yet. Create your first todo!</p>
           </div>
         ) : (
-          <TodoList todos={todos} onUpdate={handleUpdate} onDelete={handleDelete} />
+          <div className="space-y-4">
+            {todos.filter(todo => !todo.parentId).map((todo) => (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+                onAddChild={handleAddChild}
+              />
+            ))}
+          </div>
         )}
 
         {isAddingTodo && (
           <TodoForm
             onSubmit={handleCreate}
-            onCancel={() => setIsAddingTodo(false)}
+            onCancel={() => {
+              setIsAddingTodo(false);
+              setParentIdForNewTodo(null);
+            }}
             isSubmitting={createMutation.isPending}
+            parentId={parentIdForNewTodo}
           />
         )}
 
