@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Todo, CreateTodoDto, UpdateTodoDto } from '@/types/todo';
+import { Todo, CreateTodoDto, UpdateTodoDto, PaginatedResponse, PaginationParams, TodoStatus } from '@/types/todo';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
@@ -44,9 +44,9 @@ api.interceptors.response.use(
 );
 
 export const todoApi = {
-  getAll: async (): Promise<Todo[]> => {
-    const response = await api.get<{ content: Todo[] }>('/todos');
-    return response.data.content;
+  getAll: async (params?: PaginationParams): Promise<PaginatedResponse<Todo>> => {
+    const response = await api.get<PaginatedResponse<Todo>>('/todos', { params });
+    return response.data;
   },
 
   getById: async (id: number): Promise<Todo> => {
@@ -67,4 +67,16 @@ export const todoApi = {
   delete: async (id: number): Promise<void> => {
     await api.delete(`/todos/${id}`);
   },
+
+  getByStatus: async (status: TodoStatus): Promise<Todo[]> => {
+    const response = await api.get<Todo[]>(`/todos/status/${status}`);
+    return response.data;
+  },
+
+  getChildren: async (parentId: number): Promise<Todo[]> => {
+    const response = await api.get<Todo[]>(`/todos/${parentId}/children`);
+    return response.data;
+  },
 };
+
+export default api;
