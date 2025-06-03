@@ -10,21 +10,21 @@ describe('Button', () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass('inline-flex', 'items-center', 'justify-center');
     expect(button).toHaveClass('h-10', 'px-4', 'text-sm'); // md size (default)
-    expect(button).toHaveClass('bg-primary', 'border'); // primary variant (default)
+    expect(button).toHaveClass('bg-blue-600', 'border'); // primary variant (default)
   });
 
   it('renders different variants correctly', () => {
     const { rerender } = render(<Button variant="secondary">Secondary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-secondary');
+    expect(screen.getByRole('button')).toHaveClass('bg-gray-600');
 
     rerender(<Button variant="ghost">Ghost</Button>);
-    expect(screen.getByRole('button')).toHaveClass('text-foreground');
+    expect(screen.getByRole('button')).toHaveClass('text-gray-700');
 
     rerender(<Button variant="danger">Danger</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-destructive');
+    expect(screen.getByRole('button')).toHaveClass('bg-red-600');
 
     rerender(<Button variant="outline">Outline</Button>);
-    expect(screen.getByRole('button')).toHaveClass('border-2', 'border-primary');
+    expect(screen.getByRole('button')).toHaveClass('border-2', 'border-blue-600');
   });
 
   it('renders different sizes correctly', () => {

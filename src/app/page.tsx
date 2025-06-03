@@ -103,6 +103,13 @@ function TodoApp() {
     setDeletingTodo(todo);
   };
 
+  const handleDeleteFromEdit = () => {
+    if (editingTodo) {
+      setDeletingTodo(editingTodo);
+      setEditingTodo(null);
+    }
+  };
+
   const confirmDelete = () => {
     if (deletingTodo) {
       deleteMutation.mutate(deletingTodo.id);
@@ -159,7 +166,7 @@ function TodoApp() {
                   setParentIdForNewTodo(null);
                   setIsAddingTodo(true);
                 }}
-                className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow-lg transition-all"
               >
                 Add New Todo
               </button>
@@ -205,16 +212,18 @@ function TodoApp() {
             todo={editingTodo}
             onSubmit={handleUpdateSubmit}
             onCancel={() => setEditingTodo(null)}
+            onDelete={handleDeleteFromEdit}
             isSubmitting={updateMutation.isPending}
+            isDeleting={deleteMutation.isPending}
           />
         )}
 
         {deletingTodo && (
           <Modal open={true} onClose={cancelDelete}>
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Delete Todo</h2>
+              <h2 className="text-xl font-semibold">TODOを削除</h2>
               <p className="text-muted-foreground">
-                Are you sure you want to delete &quot;{deletingTodo.title}&quot;? This action cannot be undone.
+                「{deletingTodo.title}」を削除してもよろしいですか？この操作は取り消せません。
               </p>
               <div className="flex gap-3 justify-end">
                 <Button
@@ -222,14 +231,14 @@ function TodoApp() {
                   onClick={cancelDelete}
                   disabled={deleteMutation.isPending}
                 >
-                  Cancel
+                  キャンセル
                 </Button>
                 <Button
                   variant="danger"
                   onClick={confirmDelete}
                   disabled={deleteMutation.isPending}
                 >
-                  {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+                  {deleteMutation.isPending ? '削除中...' : '削除'}
                 </Button>
               </div>
             </div>

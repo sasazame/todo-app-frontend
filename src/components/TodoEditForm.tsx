@@ -12,10 +12,12 @@ interface TodoEditFormProps {
   todo: Todo;
   onSubmit: (data: UpdateTodoDto) => void;
   onCancel: () => void;
+  onDelete: () => void;
   isSubmitting?: boolean;
+  isDeleting?: boolean;
 }
 
-export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }: TodoEditFormProps) {
+export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSubmitting, isDeleting }: TodoEditFormProps) {
   const {
     register,
     handleSubmit,
@@ -44,7 +46,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
   return (
     <Modal open={true} onClose={onCancel}>
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Edit Todo</h2>
+        <h2 className="text-xl font-semibold">TODOを編集</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
@@ -78,9 +80,9 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
                 id="status"
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
               >
-                <option value="TODO">TODO</option>
-                <option value="IN_PROGRESS">IN PROGRESS</option>
-                <option value="DONE">DONE</option>
+                <option value="TODO">未着手</option>
+                <option value="IN_PROGRESS">進行中</option>
+                <option value="DONE">完了</option>
               </select>
             </div>
 
@@ -93,9 +95,9 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
                 id="priority"
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
               >
-                <option value="LOW">LOW</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="HIGH">HIGH</option>
+                <option value="LOW">低</option>
+                <option value="MEDIUM">中</option>
+                <option value="HIGH">高</option>
               </select>
             </div>
           </div>
@@ -109,21 +111,31 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, isSubmitting }:
             />
           </div>
 
-          <div className="flex gap-3 justify-end mt-6">
+          <div className="flex justify-between mt-6">
             <Button
               type="button"
-              variant="secondary"
-              onClick={onCancel}
-              disabled={isSubmitting}
+              variant="danger"
+              onClick={onDelete}
+              disabled={isSubmitting || isDeleting}
             >
-              Cancel
+              {isDeleting ? '削除中...' : '削除'}
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Updating...' : 'Update Todo'}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={onCancel}
+                disabled={isSubmitting || isDeleting}
+              >
+                キャンセル
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || isDeleting}
+              >
+                {isSubmitting ? '更新中...' : '更新'}
+              </Button>
+            </div>
           </div>
         </form>
       </div>

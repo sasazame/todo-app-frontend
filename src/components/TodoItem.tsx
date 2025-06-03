@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Todo } from '@/types/todo';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Todo, UpdateTodoDto } from '@/types/todo';
 import { todoApi } from '@/lib/api';
 import { Button } from '@/components/ui';
+import { Check, ChevronDown, ChevronRight, Edit2 } from 'lucide-react';
+import { showSuccess } from '@/components/ui/toast';
 
 interface TodoItemProps {
   todo: Todo;
@@ -16,12 +18,33 @@ interface TodoItemProps {
 
 export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level = 0 }: TodoItemProps) {
   const [showChildren, setShowChildren] = useState(false);
+  const [isHoveringCheckbox, setIsHoveringCheckbox] = useState(false);
+  const queryClient = useQueryClient();
   
   const { data: children = [], isLoading } = useQuery({
     queryKey: ['todos', todo.id, 'children'],
     queryFn: () => todoApi.getChildren(todo.id),
     enabled: showChildren,
   });
+
+  // Mutation for quick status toggle
+  const toggleStatusMutation = useMutation({
+    mutationFn: (newStatus: Todo['status']) => {
+      const updateData: UpdateTodoDto = {
+        status: newStatus,
+      };
+      return todoApi.update(todo.id, updateData);
+    },
+    onSuccess: (updatedTodo) => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] });
+      showSuccess(`タスクを${updatedTodo.status === 'DONE' ? '完了' : '未完了'}にしました`);
+    },
+  });
+
+  const handleToggleComplete = () => {
+    const newStatus = todo.status === 'DONE' ? 'TODO' : 'DONE';
+    toggleStatusMutation.mutate(newStatus);
+  };
 
   const getStatusColor = (status: Todo['status']) => {
     switch (status) {
@@ -48,68 +71,100 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
   return (
     <div className="space-y-2">
       <div
-        className={`bg-card p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow ${
-          level > 0 ? 'ml-8 border-l-4 border-primary/20' : ''
+        className={`bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ${
+          level > 0 ? 'ml-8 border-l-4 border-primary/30' : ''
         }`}
       >
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-card-foreground">{todo.title}</h3>
-            {level === 0 && (
+        <div className="flex items-start p-4 gap-3">
+          {/* Checkbox for completion */}
+          <button
+            onClick={handleToggleComplete}
+            onMouseEnter={() => setIsHoveringCheckbox(true)}
+            onMouseLeave={() => setIsHoveringCheckbox(false)}
+            disabled={toggleStatusMutation.isPending}
+            className={`
+              mt-1 w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center
+              ${todo.status === 'DONE' 
+                ? 'bg-primary border-primary text-primary-foreground' 
+                : 'border-muted-foreground/50 hover:border-primary'
+              }
+              ${toggleStatusMutation.isPending ? 'opacity-50' : ''}
+            `}
+            aria-label={todo.status === 'DONE' ? 'Mark as incomplete' : 'Mark as complete'}
+          >
+            {(todo.status === 'DONE' || isHoveringCheckbox) && (
+              <Check className="w-3 h-3" strokeWidth={3} />
+            )}
+          </button>
+
+          {/* Main content */}
+          <div className="flex-1">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
+                {children.length > 0 && level === 0 && (
+                  <button
+                    onClick={() => setShowChildren(!showChildren)}
+                    className="p-1 hover:bg-accent rounded transition-colors"
+                    aria-label={showChildren ? 'Hide subtasks' : 'Show subtasks'}
+                  >
+                    {showChildren ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
+                  </button>
+                )}
+                <h3 className={`text-lg font-semibold ${todo.status === 'DONE' ? 'line-through text-muted-foreground' : 'text-card-foreground'}`}>
+                  {todo.title}
+                </h3>
+              </div>
+              <div className="flex gap-2">
+                <span
+                  className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                    todo.status
+                  )}`}
+                >
+                  {todo.status === 'TODO' ? '未着手' : todo.status === 'IN_PROGRESS' ? '進行中' : '完了'}
+                </span>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(todo.priority)}`}>
+                  {todo.priority === 'HIGH' ? '高' : todo.priority === 'MEDIUM' ? '中' : '低'}
+                </span>
+              </div>
+            </div>
+            
+            {todo.description && (
+              <p className={`text-muted-foreground mb-3 ${todo.status === 'DONE' ? 'line-through' : ''}`}>
+                {todo.description}
+              </p>
+            )}
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                {todo.dueDate && (
+                  <span>期限: {new Date(todo.dueDate).toLocaleDateString('ja-JP')}</span>
+                )}
+                {level === 0 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onAddChild(todo.id)}
+                    className="text-xs"
+                  >
+                    サブタスクを追加
+                  </Button>
+                )}
+              </div>
+              
+              {/* Edit button in bottom right */}
               <Button
                 size="sm"
-                variant="secondary"
-                onClick={() => setShowChildren(!showChildren)}
+                variant="primary"
+                onClick={() => onUpdate(todo.id, todo)}
+                leftIcon={<Edit2 className="w-3 h-3" />}
               >
-                {showChildren ? '折りたたむ' : '子タスクを表示'}
+                編集
               </Button>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <span
-              className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
-                todo.status
-              )}`}
-            >
-              {todo.status.replace('_', ' ')}
-            </span>
-            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(todo.priority)}`}>
-              {todo.priority}
-            </span>
-          </div>
-        </div>
-        
-        {todo.description && (
-          <p className="text-muted-foreground mb-4">{todo.description}</p>
-        )}
-        
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-muted-foreground">
-            {todo.dueDate && (
-              <span>Due: {new Date(todo.dueDate).toLocaleDateString()}</span>
-            )}
-          </div>
-          <div className="flex gap-2">
-            {level === 0 && (
-              <button
-                onClick={() => onAddChild(todo.id)}
-                className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                Add Subtask
-              </button>
-            )}
-            <button
-              onClick={() => onUpdate(todo.id, todo)}
-              className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => onDelete(todo.id, todo)}
-              className="px-4 py-2 text-sm font-medium text-destructive hover:text-destructive/80 focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              Delete
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -130,7 +185,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
       )}
       
       {showChildren && isLoading && (
-        <div className="ml-8 text-muted-foreground">Loading subtasks...</div>
+        <div className="ml-8 text-muted-foreground">サブタスクを読み込み中...</div>
       )}
     </div>
   );

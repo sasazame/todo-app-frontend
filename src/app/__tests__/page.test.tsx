@@ -250,19 +250,28 @@ describe('Home Page', () => {
       expect(screen.getByText('Test Todo 1')).toBeInTheDocument();
     });
 
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
+    // First open the edit form
+    const editButtons = screen.getAllByText('編集');
+    fireEvent.click(editButtons[0]);
+
+    // Wait for edit form to appear
+    await waitFor(() => {
+      expect(screen.getByText('TODOを編集')).toBeInTheDocument();
+    });
+
+    // Click delete button in edit form
+    const deleteButton = screen.getByText('削除');
+    fireEvent.click(deleteButton);
 
     // Check that delete confirmation modal appears
     await waitFor(() => {
-      expect(screen.getByText('Delete Todo')).toBeInTheDocument();
-      expect(screen.getByText('Are you sure you want to delete "Test Todo 1"? This action cannot be undone.')).toBeInTheDocument();
+      expect(screen.getByText('TODOを削除')).toBeInTheDocument();
+      expect(screen.getByText('「Test Todo 1」を削除してもよろしいですか？この操作は取り消せません。')).toBeInTheDocument();
     });
 
     // Click the confirm delete button in the modal
-    const modal = screen.getByText('Delete Todo').closest('div');
-    const confirmButton = modal!.querySelector('button:last-child') as HTMLButtonElement;
-    fireEvent.click(confirmButton);
+    const confirmButtons = screen.getAllByText('削除');
+    fireEvent.click(confirmButtons[confirmButtons.length - 1]);
 
     await waitFor(() => {
       expect(todoApi.delete).toHaveBeenCalledWith(1);
@@ -289,21 +298,31 @@ describe('Home Page', () => {
       expect(screen.getByText('Test Todo 1')).toBeInTheDocument();
     });
 
-    const deleteButtons = screen.getAllByText('Delete');
-    fireEvent.click(deleteButtons[0]);
+    // First open the edit form
+    const editButtons = screen.getAllByText('編集');
+    fireEvent.click(editButtons[0]);
+
+    // Wait for edit form to appear
+    await waitFor(() => {
+      expect(screen.getByText('TODOを編集')).toBeInTheDocument();
+    });
+
+    // Click delete button in edit form
+    const deleteButton = screen.getByText('削除');
+    fireEvent.click(deleteButton);
 
     // Check that delete confirmation modal appears
     await waitFor(() => {
-      expect(screen.getByText('Delete Todo')).toBeInTheDocument();
+      expect(screen.getByText('TODOを削除')).toBeInTheDocument();
     });
 
     // Click the cancel button
-    const cancelButton = screen.getByText('Cancel');
+    const cancelButton = screen.getByText('キャンセル');
     fireEvent.click(cancelButton);
 
     // Modal should disappear and delete should not be called
     await waitFor(() => {
-      expect(screen.queryByText('Delete Todo')).not.toBeInTheDocument();
+      expect(screen.queryByText('TODOを削除')).not.toBeInTheDocument();
     });
     expect(todoApi.delete).not.toHaveBeenCalled();
   });
@@ -328,10 +347,10 @@ describe('Home Page', () => {
       expect(screen.getByText('Test Todo 1')).toBeInTheDocument();
     });
 
-    const editButtons = screen.getAllByText('Edit');
+    const editButtons = screen.getAllByText('編集');
     fireEvent.click(editButtons[0]);
 
-    expect(screen.getByText('Edit Todo')).toBeInTheDocument();
+    expect(screen.getByText('TODOを編集')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Test Todo 1')).toBeInTheDocument();
   });
 });
