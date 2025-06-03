@@ -17,6 +17,7 @@ describe('TodoEditForm', () => {
 
   const mockOnSubmit = jest.fn();
   const mockOnCancel = jest.fn();
+  const mockOnDelete = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,6 +29,7 @@ describe('TodoEditForm', () => {
         todo={mockTodo}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
       />
     );
 
@@ -51,13 +53,14 @@ describe('TodoEditForm', () => {
         todo={mockTodo}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
       />
     );
 
     const titleInput = screen.getByLabelText(/title/i);
     await user.clear(titleInput);
 
-    const submitButton = screen.getByText('Update Todo');
+    const submitButton = screen.getByText('更新');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -75,6 +78,7 @@ describe('TodoEditForm', () => {
         todo={mockTodo}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
       />
     );
 
@@ -84,7 +88,7 @@ describe('TodoEditForm', () => {
 
     await user.selectOptions(screen.getByLabelText(/status/i), 'DONE');
 
-    const submitButton = screen.getByText('Update Todo');
+    const submitButton = screen.getByText('更新');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -106,10 +110,11 @@ describe('TodoEditForm', () => {
         todo={mockTodo}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
       />
     );
 
-    const cancelButton = screen.getByText('Cancel');
+    const cancelButton = screen.getByText('キャンセル');
     fireEvent.click(cancelButton);
 
     expect(mockOnCancel).toHaveBeenCalled();
@@ -121,12 +126,14 @@ describe('TodoEditForm', () => {
         todo={mockTodo}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
         isSubmitting={true}
       />
     );
 
-    expect(screen.getByText('Updating...')).toBeDisabled();
-    expect(screen.getByText('Cancel')).toBeDisabled();
+    expect(screen.getByText('更新中...')).toBeDisabled();
+    expect(screen.getByText('キャンセル')).toBeDisabled();
+    expect(screen.getByText('削除')).toBeDisabled();
   });
 
   it('handles todo without due date', () => {
@@ -137,6 +144,7 @@ describe('TodoEditForm', () => {
         todo={todoWithoutDueDate}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
       />
     );
 
@@ -150,6 +158,7 @@ describe('TodoEditForm', () => {
         todo={mockTodo}
         onSubmit={mockOnSubmit}
         onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
       />
     );
 
@@ -164,5 +173,37 @@ describe('TodoEditForm', () => {
     expect(statusSelect).toHaveClass('text-foreground');
     expect(prioritySelect).toHaveClass('text-foreground');
     expect(dueDateInput).toHaveClass('text-foreground');
+  });
+
+  it('calls onDelete when Delete button is clicked', () => {
+    render(
+      <TodoEditForm
+        todo={mockTodo}
+        onSubmit={mockOnSubmit}
+        onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
+      />
+    );
+
+    const deleteButton = screen.getByText('削除');
+    fireEvent.click(deleteButton);
+
+    expect(mockOnDelete).toHaveBeenCalled();
+  });
+
+  it('disables buttons when deleting', () => {
+    render(
+      <TodoEditForm
+        todo={mockTodo}
+        onSubmit={mockOnSubmit}
+        onCancel={mockOnCancel}
+        onDelete={mockOnDelete}
+        isDeleting={true}
+      />
+    );
+
+    expect(screen.getByText('削除中...')).toBeDisabled();
+    expect(screen.getByText('更新')).toBeDisabled();
+    expect(screen.getByText('キャンセル')).toBeDisabled();
   });
 });
