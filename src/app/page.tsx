@@ -90,7 +90,7 @@ function TodoApp() {
     createMutation.mutate({ ...data, parentId: parentIdForNewTodo });
   };
 
-  const handleUpdate = (id: number, todo: Todo) => {
+  const handleUpdate = (_id: number, todo: Todo) => {
     setEditingTodo(todo);
   };
 
@@ -100,7 +100,7 @@ function TodoApp() {
     }
   };
 
-  const handleDelete = (id: number, todo: Todo) => {
+  const handleDelete = (_id: number, todo: Todo) => {
     setDeletingTodo(todo);
   };
 

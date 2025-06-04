@@ -32,6 +32,9 @@
     "login": "Login",
     "loginDescription": "Enter your credentials to access your account",
     "register": "Register",
+    "createAccount": "Create account",
+    "getStarted": "Enter your information to get started",
+    "creatingAccount": "Creating account...",
     "logout": "Logout",
     "email": "Email",
     "username": "Username",
@@ -40,6 +43,10 @@
     "forgotPassword": "Forgot Password?",
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?",
+    "termsText": "By creating an account, you agree to our",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "agreeToTerms": "",
     "loginSuccess": "Successfully logged in",
     "logoutSuccess": "Successfully logged out",
     "registerSuccess": "Account created successfully",
@@ -54,11 +61,15 @@
     "addTodo": "Add TODO",
     "editTodo": "Edit TODO",
     "deleteTodo": "Delete TODO",
+    "createSubtask": "Create Subtask",
+    "createNewTodo": "Create New TODO",
     "todoTitle": "Title",
+    "titleRequired": "Title is required",
     "todoDescription": "Description",
     "todoStatus": "Status",
     "todoPriority": "Priority",
     "dueDate": "Due Date",
+    "dueDateLabel": "Due:",
     "createdAt": "Created At",
     "updatedAt": "Updated At",
     "completed": "Completed",
@@ -73,6 +84,26 @@
     "todoDeleted": "TODO deleted successfully",
     "todoCompleted": "TODO completed successfully",
     "confirmDelete": "Are you sure you want to delete this TODO?",
+    "creating": "Creating...",
+    "updating": "Updating...",
+    "createTodo": "Create TODO",
+    "updateTodo": "Update TODO",
+    "markIncomplete": "Mark as incomplete",
+    "markComplete": "Mark as complete",
+    "hideSubtasks": "Hide subtasks",
+    "showSubtasks": "Show subtasks",
+    "addSubtask": "Add Subtask",
+    "loadingSubtasks": "Loading subtasks...",
+    "statusOptions": {
+      "TODO": "TODO",
+      "IN_PROGRESS": "In Progress",
+      "DONE": "Done"
+    },
+    "priorityOptions": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
     "filter": {
       "all": "All",
       "completed": "Completed",
@@ -112,5 +143,23 @@
     "minLength": "Minimum {min} characters required",
     "maxLength": "Maximum {max} characters allowed",
     "passwordStrength": "Password must be at least 8 characters long and contain uppercase, lowercase, and numbers"
+  },
+  "passwordStrength": {
+    "label": "Password Strength",
+    "requirements": "Requirements:",
+    "levels": {
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    },
+    "rules": {
+      "minLength": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number",
+      "special": "One special character"
+    }
   }
 }

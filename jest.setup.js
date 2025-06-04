@@ -14,3 +14,19 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
+
+// Mock next-intl
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key) => key,
+  useLocale: () => 'ja',
+  NextIntlClientProvider: ({ children }) => children,
+}));
+
+// Mock LocaleContext
+jest.mock('@/contexts/LocaleContext', () => ({
+  useLocale: () => ({
+    locale: 'ja',
+    setLocale: jest.fn(),
+  }),
+  LocaleProvider: ({ children }) => children,
+}));

@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { CreateTodoDto } from '@/types/todo';
 import { Modal } from '@/components/ui';
 import { Input } from '@/components/ui';
@@ -16,6 +17,7 @@ interface TodoFormProps {
 }
 
 export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }: TodoFormProps) {
+  const t = useTranslations();
   const {
     register,
     handleSubmit,
@@ -42,15 +44,15 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
   return (
     <Modal open={true} onClose={onCancel}>
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{parentId ? 'Create Subtask' : 'Create New Todo'}</h2>
+        <h2 className="text-xl font-semibold">{parentId ? t('todo.createSubtask') : t('todo.createNewTodo')}</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Input
-              {...register('title', { required: 'Title is required' })}
+              {...register('title', { required: t('todo.titleRequired') })}
               type="text"
               id="title"
-              label="Title *"
+              label={`${t('todo.todoTitle')} *`}
             />
             {errors.title && (
               <p className="mt-1 text-sm text-destructive">{errors.title.message}</p>
@@ -62,38 +64,38 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
               {...register('description')}
               id="description"
               rows={3}
-              label="Description"
+              label={t('todo.todoDescription')}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="status" className="block text-sm font-medium mb-1">
-                Status
+                {t('todo.todoStatus')}
               </label>
               <select
                 {...register('status')}
                 id="status"
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
               >
-                <option value="TODO">TODO</option>
-                <option value="IN_PROGRESS">IN PROGRESS</option>
-                <option value="DONE">DONE</option>
+                <option value="TODO">{t('todo.statusOptions.TODO')}</option>
+                <option value="IN_PROGRESS">{t('todo.statusOptions.IN_PROGRESS')}</option>
+                <option value="DONE">{t('todo.statusOptions.DONE')}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="priority" className="block text-sm font-medium mb-1">
-                Priority
+                {t('todo.todoPriority')}
               </label>
               <select
                 {...register('priority')}
                 id="priority"
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
               >
-                <option value="LOW">LOW</option>
-                <option value="MEDIUM">MEDIUM</option>
-                <option value="HIGH">HIGH</option>
+                <option value="LOW">{t('todo.priorityOptions.LOW')}</option>
+                <option value="MEDIUM">{t('todo.priorityOptions.MEDIUM')}</option>
+                <option value="HIGH">{t('todo.priorityOptions.HIGH')}</option>
               </select>
             </div>
           </div>
@@ -103,7 +105,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
               {...register('dueDate')}
               type="date"
               id="dueDate"
-              label="Due Date"
+              label={t('todo.dueDate')}
             />
           </div>
 
@@ -114,13 +116,13 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
               onClick={onCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Creating...' : 'Create Todo'}
+              {isSubmitting ? t('todo.creating') : t('todo.createTodo')}
             </Button>
           </div>
         </form>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, UserPlus, User, Mail, Lock, Sparkles } from 'lucide-react';
@@ -12,6 +13,7 @@ import { useRegister, useAuth } from '@/hooks/useAuth';
 
 
 export default function RegisterPage() {
+  const t = useTranslations();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -59,9 +61,9 @@ export default function RegisterPage() {
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Create account</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('auth.createAccount')}</h1>
             <p className="text-white/70">
-              Enter your information to get started
+              {t('auth.getStarted')}
             </p>
           </div>
 
@@ -70,7 +72,7 @@ export default function RegisterPage() {
               <FloatingInput
                 {...register('username')}
                 type="text"
-                label="Username"
+                label={t('auth.username')}
                 error={errors.username?.message}
                 autoComplete="username"
                 disabled={isLoading}
@@ -82,7 +84,7 @@ export default function RegisterPage() {
               <FloatingInput
                 {...register('email')}
                 type="email"
-                label="Email Address"
+                label={t('auth.email')}
                 error={errors.email?.message}
                 autoComplete="email"
                 disabled={isLoading}
@@ -94,7 +96,7 @@ export default function RegisterPage() {
               <FloatingInput
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
-                label="Password"
+                label={t('auth.password')}
                 error={errors.password?.message}
                 autoComplete="new-password"
                 disabled={isLoading}
@@ -121,7 +123,7 @@ export default function RegisterPage() {
               <FloatingInput
                 {...register('confirmPassword')}
                 type={showConfirmPassword ? 'text' : 'password'}
-                label="Confirm Password"
+                label={t('auth.confirmPassword')}
                 error={errors.confirmPassword?.message}
                 autoComplete="new-password"
                 disabled={isLoading}
@@ -144,13 +146,13 @@ export default function RegisterPage() {
             </div>
 
             <div className="text-xs text-white/60">
-              By creating an account, you agree to our{' '}
+              {t('auth.termsText')}{' '}
               <Link href="/terms" className="text-blue-300 hover:text-blue-200">
-                Terms of Service
+                {t('auth.termsOfService')}
               </Link>{' '}
-              and{' '}
+              {t('auth.agreeToTerms')}{' '}
               <Link href="/privacy" className="text-blue-300 hover:text-blue-200">
-                Privacy Policy
+                {t('auth.privacyPolicy')}
               </Link>
               .
             </div>
@@ -162,16 +164,16 @@ export default function RegisterPage() {
               loading={isLoading}
               leftIcon={!isLoading && <UserPlus className="h-5 w-5" />}
             >
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {isLoading ? t('auth.creatingAccount') : t('auth.createAccount')}
             </Button>
 
             <div className="text-center text-sm text-white/70">
-              Already have an account?{' '}
+              {t('auth.alreadyHaveAccount')}{' '}
               <Link
                 href="/login"
                 className="text-blue-300 hover:text-blue-200 transition-colors font-medium"
               >
-                Sign in
+                {t('auth.login')}
               </Link>
             </div>
           </form>
