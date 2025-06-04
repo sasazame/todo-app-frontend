@@ -37,6 +37,23 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
+// Mock useTranslations
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'auth.login': 'Login',
+      'auth.loginDescription': 'Enter your credentials to access your account',
+      'auth.email': 'Email',
+      'auth.password': 'Password',
+      'auth.forgotPassword': 'Forgot Password?',
+      'auth.dontHaveAccount': "Don't have an account?",
+      'auth.register': 'Sign up',
+      'common.loading': 'Loading...',
+    };
+    return translations[key] || key;
+  },
+}));
+
 describe('LoginPage', () => {
   const mockPush = jest.fn();
   const mockRouter = {
@@ -67,20 +84,20 @@ describe('LoginPage', () => {
   it('renders login form correctly', () => {
     render(<LoginPage />, { wrapper });
 
-    expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument();
     expect(screen.getByText(/don't have an account/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /sign up/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /forgot password/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Sign up' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Forgot Password?' })).toBeInTheDocument();
   });
 
   it('shows validation errors for empty fields', async () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper });
 
-    const submitButton = screen.getByRole('button', { name: /sign in/i });
+    const submitButton = screen.getByRole('button', { name: 'Login' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -96,7 +113,7 @@ describe('LoginPage', () => {
     const emailInput = screen.getByLabelText(/email/i);
     await user.type(emailInput, 'invalid-email');
 
-    const submitButton = screen.getByRole('button', { name: /sign in/i });
+    const submitButton = screen.getByRole('button', { name: 'Login' });
     await user.click(submitButton);
 
     // Wait for form validation to trigger
@@ -136,7 +153,7 @@ describe('LoginPage', () => {
     await user.type(emailInput, 'test@example.com');
     await user.type(passwordInput, 'password123');
 
-    const submitButton = screen.getByRole('button', { name: /sign in/i });
+    const submitButton = screen.getByRole('button', { name: 'Login' });
     await user.click(submitButton);
 
     // Just verify form submission works without checking loading states
@@ -154,7 +171,7 @@ describe('LoginPage', () => {
     await user.type(emailInput, 'test@example.com');
     await user.type(passwordInput, 'password123');
 
-    const submitButton = screen.getByRole('button', { name: /sign in/i });
+    const submitButton = screen.getByRole('button', { name: 'Login' });
     
     // Click submit
     await user.click(submitButton);
@@ -166,10 +183,10 @@ describe('LoginPage', () => {
   it('has correct links', () => {
     render(<LoginPage />, { wrapper });
 
-    const signUpLink = screen.getByRole('link', { name: /sign up/i });
+    const signUpLink = screen.getByRole('link', { name: 'Sign up' });
     expect(signUpLink).toHaveAttribute('href', '/register');
 
-    const forgotPasswordLink = screen.getByRole('link', { name: /forgot password/i });
+    const forgotPasswordLink = screen.getByRole('link', { name: 'Forgot Password?' });
     expect(forgotPasswordLink).toHaveAttribute('href', '/forgot-password');
   });
 });

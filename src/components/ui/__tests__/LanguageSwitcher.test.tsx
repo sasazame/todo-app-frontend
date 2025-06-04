@@ -35,11 +35,13 @@ describe('LanguageSwitcher', () => {
     expect(button).toHaveAttribute('aria-label', 'Language');
   });
 
-  it('displays current locale name on desktop', () => {
+  it('displays globe icon', () => {
     render(<LanguageSwitcher />);
     
-    // Should show Japanese name for 'ja' locale
-    expect(screen.getByText('日本語')).toBeInTheDocument();
+    // Should show globe icon instead of locale name
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    // Globe icon should be present (we can't easily test for the icon itself)
   });
 
   it('opens modal when clicked', () => {

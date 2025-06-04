@@ -3,6 +3,34 @@ import userEvent from '@testing-library/user-event';
 import TodoEditForm from '../TodoEditForm';
 import { Todo } from '@/types/todo';
 
+// Mock useTranslations
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'todo.editTodo': 'Edit TODO',
+      'todo.todoTitle': 'Title',
+      'todo.titleRequired': 'Title is required',
+      'todo.todoDescription': 'Description',
+      'todo.todoStatus': 'Status',
+      'todo.todoPriority': 'Priority',
+      'todo.dueDate': 'Due Date',
+      'todo.statusOptions.TODO': 'TODO',
+      'todo.statusOptions.IN_PROGRESS': 'In Progress',
+      'todo.statusOptions.DONE': 'Done',
+      'todo.priorityOptions.LOW': 'Low',
+      'todo.priorityOptions.MEDIUM': 'Medium',
+      'todo.priorityOptions.HIGH': 'High',
+      'todo.updateTodo': 'Update TODO',
+      'todo.deleteTodo': 'Delete TODO',
+      'todo.updating': 'Updating...',
+      'common.cancel': 'Cancel',
+      'common.loading': 'Loading...',
+      'common.delete': 'Delete',
+    };
+    return translations[key] || key;
+  },
+}));
+
 describe('TodoEditForm', () => {
   const mockTodo: Todo = {
     id: 1,
@@ -60,7 +88,7 @@ describe('TodoEditForm', () => {
     const titleInput = screen.getByLabelText(/title/i);
     await user.clear(titleInput);
 
-    const submitButton = screen.getByText('更新');
+    const submitButton = screen.getByText('Update TODO');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -88,7 +116,7 @@ describe('TodoEditForm', () => {
 
     await user.selectOptions(screen.getByLabelText(/status/i), 'DONE');
 
-    const submitButton = screen.getByText('更新');
+    const submitButton = screen.getByText('Update TODO');
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -114,7 +142,7 @@ describe('TodoEditForm', () => {
       />
     );
 
-    const cancelButton = screen.getByText('キャンセル');
+    const cancelButton = screen.getByText('Cancel');
     fireEvent.click(cancelButton);
 
     expect(mockOnCancel).toHaveBeenCalled();
@@ -131,8 +159,8 @@ describe('TodoEditForm', () => {
       />
     );
 
-    expect(screen.getByText('更新中...')).toBeDisabled();
-    expect(screen.getByText('キャンセル')).toBeDisabled();
+    expect(screen.getByText('Update TODO中...')).toBeDisabled();
+    expect(screen.getByText('Cancel')).toBeDisabled();
     expect(screen.getByText('削除')).toBeDisabled();
   });
 
@@ -185,7 +213,7 @@ describe('TodoEditForm', () => {
       />
     );
 
-    const deleteButton = screen.getByText('削除');
+    const deleteButton = screen.getByText('Delete');
     fireEvent.click(deleteButton);
 
     expect(mockOnDelete).toHaveBeenCalled();
@@ -202,8 +230,8 @@ describe('TodoEditForm', () => {
       />
     );
 
-    expect(screen.getByText('削除中...')).toBeDisabled();
-    expect(screen.getByText('更新')).toBeDisabled();
-    expect(screen.getByText('キャンセル')).toBeDisabled();
+    expect(screen.getByText('Loading...')).toBeDisabled();
+    expect(screen.getByText('Update TODO')).toBeDisabled();
+    expect(screen.getByText('Cancel')).toBeDisabled();
   });
 });

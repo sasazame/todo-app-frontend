@@ -6,6 +6,28 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 
 jest.mock('@/hooks/useAuth');
 
+// Mock useTranslations
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'app.title': 'TODO App',
+      'header.profile': 'Profile',
+      'header.logout': 'Logout',
+      'common.language': 'Language',
+      'language': 'Language',
+    };
+    return translations[key] || key;
+  },
+}));
+
+// Mock LocaleContext
+jest.mock('@/contexts/LocaleContext', () => ({
+  useLocale: () => ({
+    locale: 'ja',
+    setLocale: jest.fn(),
+  }),
+}));
+
 const mockUser = {
   id: 1,
   username: 'testuser',
@@ -77,8 +99,8 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    // Check for language switcher button
-    const languageButton = screen.getByRole('button', { name: 'common.language' });
+    // Check for language switcher button (now a globe icon)
+    const languageButton = screen.getByRole('button', { name: 'Language' });
     expect(languageButton).toBeInTheDocument();
   });
 

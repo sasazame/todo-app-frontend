@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from '@/contexts/LocaleContext';
-import { Button } from './Button';
 import { Modal } from './Modal';
-import { Languages, Check } from 'lucide-react';
+import { Globe, Check } from 'lucide-react';
 import { type Locale, locales } from '@/i18n/config';
 
 const localeNames: Record<Locale, string> = {
@@ -30,16 +29,14 @@ export function LanguageSwitcher() {
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
+      <button
         onClick={() => setIsOpen(true)}
-        leftIcon={<Languages className="h-4 w-4" />}
+        className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         aria-label={t('language')}
+        title={t('language')}
       >
-        <span className="hidden sm:inline">{localeNames[locale]}</span>
-        <span className="sm:hidden">{localeFlags[locale]}</span>
-      </Button>
+        <Globe className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+      </button>
 
       <Modal
         open={isOpen}

@@ -122,7 +122,12 @@
     "updateProfile": "Update Profile",
     "profileUpdated": "Profile updated successfully",
     "passwordChanged": "Password changed successfully",
-    "invalidCurrentPassword": "Current password is incorrect"
+    "invalidCurrentPassword": "Current password is incorrect",
+    "accountDeleted": "Account deleted successfully",
+    "deleteAccount": "Delete Account",
+    "confirmAccountDelete": "Are you sure you want to delete your account? This action cannot be undone.",
+    "editProfile": "Edit Profile",
+    "dangerZone": "Danger Zone"
   },
   "errors": {
     "general": "An error occurred",

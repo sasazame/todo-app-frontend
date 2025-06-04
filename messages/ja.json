@@ -122,7 +122,12 @@
     "updateProfile": "プロフィール更新",
     "profileUpdated": "プロフィールを更新しました",
     "passwordChanged": "パスワードを変更しました",
-    "invalidCurrentPassword": "現在のパスワードが正しくありません"
+    "invalidCurrentPassword": "現在のパスワードが正しくありません",
+    "accountDeleted": "アカウントを削除しました",
+    "deleteAccount": "アカウントを削除",
+    "confirmAccountDelete": "本当にアカウントを削除しますか？この操作は取り消せません。",
+    "editProfile": "プロフィール編集",
+    "dangerZone": "危険な操作"
   },
   "errors": {
     "general": "エラーが発生しました",

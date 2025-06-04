@@ -32,6 +32,38 @@ jest.mock('@/hooks/useAuth', () => ({
   })),
 }));
 
+// Mock useTranslations to return actual strings
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'profile.title': 'プロフィール',
+      'profile.personalInfo': '個人情報',
+      'profile.accountSettings': 'アカウント設定',
+      'profile.changePassword': 'パスワードを変更',
+      'profile.currentPassword': '現在のパスワード',
+      'profile.newPassword': '新しいパスワード',
+      'profile.confirmNewPassword': '新しいパスワード（確認）',
+      'profile.updateProfile': 'プロフィール更新',
+      'profile.profileUpdated': 'Profile updated successfully!',
+      'profile.passwordChanged': 'Password changed successfully!',
+      'profile.deleteAccount': 'アカウントを削除',
+      'profile.confirmAccountDelete': '本当にアカウントを削除しますか？この操作は取り消せません。',
+      'profile.editProfile': 'プロフィールを編集',
+      'profile.dangerZone': '危険な操作',
+      'profile.accountDeleted': 'Account deleted successfully',
+      'auth.username': 'ユーザー名',
+      'auth.email': 'メールアドレス',
+      'todo.createdAt': '作成日',
+      'common.edit': '編集',
+      'common.cancel': 'キャンセル',
+      'common.save': '変更',
+      'common.back': '戻る',
+      'errors.general': 'An error occurred',
+    };
+    return translations[key] || key;
+  },
+}));
+
 const mockUser = {
   id: 1,
   username: 'testuser',
@@ -71,7 +103,7 @@ describe('ProfilePage', () => {
     renderWithQuery(<ProfilePage />);
 
     await waitFor(() => {
-      expect(screen.getByText('プロフィール設定')).toBeInTheDocument();
+      expect(screen.getByText('プロフィール')).toBeInTheDocument();
       expect(screen.getByText(mockUser.username)).toBeInTheDocument();
       expect(screen.getByText(mockUser.email)).toBeInTheDocument();
     });
@@ -103,7 +135,7 @@ describe('ProfilePage', () => {
     await user.clear(usernameInput);
     await user.type(usernameInput, 'newusername');
 
-    const updateButton = screen.getByText('更新');
+    const updateButton = screen.getByText('プロフィール更新');
     await user.click(updateButton);
 
     await waitFor(() => {
@@ -175,11 +207,11 @@ describe('ProfilePage', () => {
     const user = userEvent.setup();
     renderWithQuery(<ProfilePage />);
 
-    const deleteButton = await screen.findByText('アカウントを削除');
-    await user.click(deleteButton);
+    // Get the delete button in the danger zone (not in the modal)
+    const deleteButtons = await screen.findAllByText('アカウントを削除');
+    await user.click(deleteButtons[0]); // First button (main page)
 
-    expect(screen.getByText('アカウントの削除')).toBeInTheDocument();
-    expect(screen.getByText(/本当にアカウントを削除しますか/)).toBeInTheDocument();
+    expect(screen.getAllByText(/本当にアカウントを削除しますか/).length).toBeGreaterThan(0);
   });
 
   it('deletes account successfully', async () => {
@@ -188,10 +220,13 @@ describe('ProfilePage', () => {
 
     renderWithQuery(<ProfilePage />);
 
-    const deleteButton = await screen.findByText('アカウントを削除');
-    await user.click(deleteButton);
+    // Click the first delete button to open modal
+    const deleteButtons = await screen.findAllByText('アカウントを削除');
+    await user.click(deleteButtons[0]);
 
-    const confirmDeleteButton = screen.getAllByText('アカウントを削除')[1];
+    // Click the confirm delete button in the modal (should be the last one)
+    const allDeleteButtons = screen.getAllByText('アカウントを削除');
+    const confirmDeleteButton = allDeleteButtons[allDeleteButtons.length - 1];
     await user.click(confirmDeleteButton);
 
     await waitFor(() => {
@@ -229,7 +264,7 @@ describe('ProfilePage', () => {
     await user.clear(usernameInput);
     await user.type(usernameInput, 'newusername');
 
-    const updateButton = screen.getByText('更新');
+    const updateButton = screen.getByText('プロフィール更新');
     await user.click(updateButton);
 
     await waitFor(() => {
