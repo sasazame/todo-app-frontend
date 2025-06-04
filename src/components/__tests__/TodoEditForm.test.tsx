@@ -23,6 +23,7 @@ jest.mock('next-intl', () => ({
       'todo.updateTodo': 'Update TODO',
       'todo.deleteTodo': 'Delete TODO',
       'todo.updating': 'Updating...',
+      'todo.deleting': 'Deleting...',
       'common.cancel': 'Cancel',
       'common.loading': 'Loading...',
       'common.delete': 'Delete',
@@ -159,9 +160,9 @@ describe('TodoEditForm', () => {
       />
     );
 
-    expect(screen.getByText('Update TODO中...')).toBeDisabled();
+    expect(screen.getByText('Updating...')).toBeDisabled();
     expect(screen.getByText('Cancel')).toBeDisabled();
-    expect(screen.getByText('削除')).toBeDisabled();
+    expect(screen.getByText('Delete')).toBeDisabled();
   });
 
   it('handles todo without due date', () => {

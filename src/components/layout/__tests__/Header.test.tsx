@@ -73,7 +73,7 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    expect(screen.getByText('app.title')).toBeInTheDocument();
+    expect(screen.getByText('TODO App')).toBeInTheDocument();
     expect(screen.getByText(mockUser.username)).toBeInTheDocument();
     // Email is no longer displayed as per requirements
     expect(screen.queryByText(`(${mockUser.email})`)).not.toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    const profileLink = screen.getByRole('link', { name: 'header.profile' });
+    const profileLink = screen.getByRole('link', { name: 'Profile' });
     expect(profileLink).toHaveAttribute('href', '/profile');
   });
 
@@ -113,7 +113,7 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    const logoutButton = screen.getByRole('button', { name: 'header.logout' });
+    const logoutButton = screen.getByRole('button', { name: 'Logout' });
     await user.click(logoutButton);
 
     expect(mockLogout).toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    const logoutButton = screen.getByRole('button', { name: 'header.logout' });
+    const logoutButton = screen.getByRole('button', { name: 'Logout' });
     expect(logoutButton).toBeDisabled();
   });
 });
