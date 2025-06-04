@@ -5,38 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, UserPlus, Check, X } from 'lucide-react';
-import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
+import { Eye, EyeOff, UserPlus, User, Mail, Lock, Sparkles } from 'lucide-react';
+import { Button, FloatingInput, PasswordStrength } from '@/components/ui';
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth';
 import { useRegister, useAuth } from '@/hooks/useAuth';
 
-// Password strength indicator component
-function PasswordStrength({ password }: { password: string }) {
-  const requirements = [
-    { regex: /.{6,}/, text: 'At least 6 characters' },
-  ];
-
-  return (
-    <div className="mt-2 space-y-1">
-      <p className="text-xs font-medium text-muted-foreground mb-1">Password requirements:</p>
-      {requirements.map((req, index) => {
-        const isValid = req.regex.test(password);
-        return (
-          <div key={index} className="flex items-center gap-2 text-xs">
-            {isValid ? (
-              <Check className="h-3 w-3 text-success-500" />
-            ) : (
-              <X className="h-3 w-3 text-muted-foreground" />
-            )}
-            <span className={isValid ? 'text-success-500' : 'text-muted-foreground'}>
-              {req.text}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -75,55 +48,62 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>
-            Enter your information to get started
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      {/* Premium Glass Card */}
+      <div className="w-full max-w-md animate-float">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl">
+          {/* Brand Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">Create account</h1>
+            <p className="text-white/70">
+              Enter your information to get started
+            </p>
+          </div>
 
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <Input
+              <FloatingInput
                 {...register('username')}
                 type="text"
                 label="Username"
-                placeholder="Choose a username"
                 error={errors.username?.message}
                 autoComplete="username"
                 disabled={isLoading}
+                leftIcon={<User className="h-4 w-4" />}
               />
             </div>
 
             <div>
-              <Input
+              <FloatingInput
                 {...register('email')}
                 type="email"
-                label="Email"
-                placeholder="Enter your email"
+                label="Email Address"
                 error={errors.email?.message}
                 autoComplete="email"
                 disabled={isLoading}
+                leftIcon={<Mail className="h-4 w-4" />}
               />
             </div>
 
             <div>
-              <Input
+              <FloatingInput
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 label="Password"
-                placeholder="Create a password"
                 error={errors.password?.message}
                 autoComplete="new-password"
                 disabled={isLoading}
+                leftIcon={<Lock className="h-4 w-4" />}
                 rightIcon={
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -138,19 +118,19 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <Input
+              <FloatingInput
                 {...register('confirmPassword')}
                 type={showConfirmPassword ? 'text' : 'password'}
                 label="Confirm Password"
-                placeholder="Confirm your password"
                 error={errors.confirmPassword?.message}
                 autoComplete="new-password"
                 disabled={isLoading}
+                leftIcon={<Lock className="h-4 w-4" />}
                 rightIcon={
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                     tabIndex={-1}
                   >
                     {showConfirmPassword ? (
@@ -163,13 +143,13 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-white/60">
               By creating an account, you agree to our{' '}
-              <Link href="/terms" className="text-primary hover:underline">
+              <Link href="/terms" className="text-purple-300 hover:text-purple-200">
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link href="/privacy" className="text-primary hover:underline">
+              <Link href="/privacy" className="text-purple-300 hover:text-purple-200">
                 Privacy Policy
               </Link>
               .
@@ -177,26 +157,26 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 border-0 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]"
               size="lg"
               loading={isLoading}
-              leftIcon={!isLoading && <UserPlus className="h-4 w-4" />}
+              leftIcon={!isLoading && <UserPlus className="h-5 w-5" />}
             >
               {isLoading ? 'Creating account...' : 'Create account'}
             </Button>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-white/70">
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="text-primary hover:underline focus:outline-none focus:underline"
+                className="text-purple-300 hover:text-purple-200 transition-colors font-medium"
               >
                 Sign in
               </Link>
             </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

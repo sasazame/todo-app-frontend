@@ -31,3 +31,5 @@ export {
   type ModalFooterProps
 } from './Modal';
 export { ThemeToggle } from './ThemeToggle';
+export { FloatingInput, type FloatingInputProps } from './FloatingInput';
+export { PasswordStrength } from './PasswordStrength';

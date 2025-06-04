@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { useRouter } from 'next/navigation';
 import RegisterPage from '../register/page';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ReactNode } from 'react';
 
 // Mock next/navigation
@@ -48,7 +49,9 @@ describe('RegisterPage', () => {
   };
 
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <AuthProvider>{children}</AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </ThemeProvider>
   );
 
   beforeEach(() => {
@@ -60,7 +63,7 @@ describe('RegisterPage', () => {
   it('renders registration form correctly', () => {
     render(<RegisterPage />, { wrapper });
 
-    expect(screen.getByRole('heading', { name: /create an account/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /create account/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
@@ -98,8 +101,8 @@ describe('RegisterPage', () => {
     await user.type(passwordInput, 'abc');
 
     // Should show requirements
-    expect(screen.getByText(/password requirements/i)).toBeInTheDocument();
-    expect(screen.getByText(/at least 6 characters/i)).toBeInTheDocument();
+    expect(screen.getByText(/requirements/i)).toBeInTheDocument();
+    expect(screen.getByText(/at least 8 characters/i)).toBeInTheDocument();
   });
 
   it('validates password confirmation', async () => {
@@ -237,11 +240,11 @@ describe('RegisterPage', () => {
 
     // All requirements should show as met (with check marks)
     // Check for success class or check icon presence
-    const requirements = screen.getByText(/password requirements/i).parentElement;
+    const requirements = screen.getByText(/requirements/i).parentElement;
     expect(requirements).toBeInTheDocument();
     
-    // Only one requirement now: minimum length
-    const requirementText = screen.getByText(/at least 6 characters/i);
-    expect(requirementText).toHaveClass('text-success-500');
+    // Password strength indicator should show strong
+    const strengthText = screen.getByText(/strong/i);
+    expect(strengthText).toBeInTheDocument();
   });
 });
