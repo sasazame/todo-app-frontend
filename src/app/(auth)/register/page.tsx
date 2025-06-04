@@ -50,12 +50,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       {/* Premium Glass Card */}
-      <div className="w-full max-w-md animate-float">
+      <div className="w-full max-w-md">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl">
           {/* Brand Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl">
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
             </div>
@@ -145,11 +145,11 @@ export default function RegisterPage() {
 
             <div className="text-xs text-white/60">
               By creating an account, you agree to our{' '}
-              <Link href="/terms" className="text-purple-300 hover:text-purple-200">
+              <Link href="/terms" className="text-blue-300 hover:text-blue-200">
                 Terms of Service
               </Link>{' '}
               and{' '}
-              <Link href="/privacy" className="text-purple-300 hover:text-purple-200">
+              <Link href="/privacy" className="text-blue-300 hover:text-blue-200">
                 Privacy Policy
               </Link>
               .
@@ -157,7 +157,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 border-0 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-0 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]"
               size="lg"
               loading={isLoading}
               leftIcon={!isLoading && <UserPlus className="h-5 w-5" />}
@@ -169,7 +169,7 @@ export default function RegisterPage() {
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="text-purple-300 hover:text-purple-200 transition-colors font-medium"
+                className="text-blue-300 hover:text-blue-200 transition-colors font-medium"
               >
                 Sign in
               </Link>
