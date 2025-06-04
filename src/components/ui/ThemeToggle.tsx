@@ -22,10 +22,10 @@ export function ThemeToggle() {
       <span
         className={cn(
           'inline-block h-6 w-6 transform rounded-full',
-          'bg-white dark:bg-neutral-900 shadow-lg',
+          'bg-white bg-neutral-900 shadow-lg',
           'transition-all duration-300 ease-in-out',
           'border-2 border-neutral-300 dark:border-neutral-600',
-          theme === 'dark' ? 'translate-x-7' : 'translate-x-1'
+          theme === 'dark' ? 'translate-x-7 ' : 'translate-x-1'
         )}
       >
         <span className="sr-only">
@@ -57,7 +57,7 @@ export function ThemeToggle() {
         className={cn(
           'absolute right-1.5 h-4 w-4',
           'transition-opacity duration-300',
-          'text-slate-200',
+          'text-slate-500',
           theme === 'dark' ? 'opacity-100' : 'opacity-0'
         )}
         fill="currentColor"

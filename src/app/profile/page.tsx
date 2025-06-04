@@ -154,8 +154,8 @@ function ProfilePage() {
               タスク一覧に戻る
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold">プロフィール設定</h1>
         </div>
+        <h1 className="text-3xl font-bold mb-8">プロフィール設定</h1>
 
         {/* Profile Information */}
         <Card className="p-6 mb-6">
