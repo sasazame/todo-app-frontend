@@ -13,6 +13,8 @@ import { showSuccess, showError } from '@/components/ui/toast';
 import { userApi } from '@/services/user';
 import { useAuth } from '@/hooks/useAuth';
 import { UpdateUserDto, ChangePasswordDto } from '@/types/user';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 const updateProfileSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters').optional(),
@@ -142,6 +144,17 @@ function ProfilePage() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container py-8 max-w-4xl">
+        <div className="flex items-center gap-4 mb-8">
+          <Link href="/">
+            <Button
+              variant="outline"
+              size="sm"
+              leftIcon={<ArrowLeft className="h-4 w-4" />}
+            >
+              タスク一覧に戻る
+            </Button>
+          </Link>
+        </div>
         <h1 className="text-3xl font-bold mb-8">プロフィール設定</h1>
 
         {/* Profile Information */}

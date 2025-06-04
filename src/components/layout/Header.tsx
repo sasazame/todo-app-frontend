@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useAuth, useLogout } from '@/hooks/useAuth';
-import { Button } from '@/components/ui';
+import { Button, ThemeToggle } from '@/components/ui';
 import { LogOut, User, Settings } from 'lucide-react';
 
 export function Header() {
@@ -30,6 +30,8 @@ export function Header() {
             <span className="font-medium">{user.username}</span>
             <span className="text-muted-foreground">({user.email})</span>
           </div>
+          
+          <ThemeToggle />
           
           <Link href="/profile">
             <Button

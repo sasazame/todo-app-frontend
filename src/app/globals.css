@@ -153,47 +153,54 @@
   --status-completed-text: var(--color-success-900);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Semantic Colors - Dark Mode */
-    --background: var(--color-neutral-950);
-    --foreground: var(--color-neutral-50);
-    --card: var(--color-neutral-950);
-    --card-foreground: var(--color-neutral-50);
-    --popover: var(--color-neutral-950);
-    --popover-foreground: var(--color-neutral-50);
-    --primary: var(--color-primary-500);
-    --primary-foreground: var(--color-neutral-50);
-    --secondary: var(--color-neutral-800);
-    --secondary-foreground: var(--color-neutral-50);
-    --muted: var(--color-neutral-800);
-    --muted-foreground: var(--color-neutral-400);
-    --accent: var(--color-neutral-800);
-    --accent-foreground: var(--color-neutral-50);
-    --destructive: var(--color-error-500);
-    --destructive-foreground: var(--color-neutral-50);
-    --success: var(--color-success-500);
-    --success-foreground: var(--color-neutral-950);
-    --border: var(--color-neutral-800);
-    --input: var(--color-neutral-800);
-    --ring: var(--color-primary-500);
+[data-theme="dark"] {
+  /* Semantic Colors - Dark Mode */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+  --primary: #60a5fa;
+  --primary-foreground: #f1f5f9;
+  --secondary: #334155;
+  --secondary-foreground: #f1f5f9;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --accent: #334155;
+  --accent-foreground: #f1f5f9;
+  --destructive: #ef4444;
+  --destructive-foreground: #f1f5f9;
+  --success: #22c55e;
+  --success-foreground: #0f172a;
+  --border: #334155;
+  --input: #334155;
+  --ring: #60a5fa;
 
-    /* Todo Priority Colors - Dark Mode */
-    --priority-low-bg: var(--color-neutral-800);
-    --priority-low-text: var(--color-neutral-300);
-    --priority-medium-bg: var(--color-primary-900);
-    --priority-medium-text: var(--color-primary-300);
-    --priority-high-bg: var(--color-error-900);
-    --priority-high-text: var(--color-error-300);
+  /* Todo Priority Colors - Dark Mode */
+  --priority-low-bg: #334155;
+  --priority-low-text: #cbd5e1;
+  --priority-medium-bg: #1e3a8a;
+  --priority-medium-text: #93c5fd;
+  --priority-high-bg: #7f1d1d;
+  --priority-high-text: #fca5a5;
 
-    /* Todo Status Colors - Dark Mode */
-    --status-pending-bg: var(--color-warning-900);
-    --status-pending-text: var(--color-warning-300);
-    --status-in-progress-bg: var(--color-primary-900);
-    --status-in-progress-text: var(--color-primary-300);
-    --status-completed-bg: var(--color-success-900);
-    --status-completed-text: var(--color-success-300);
-  }
+  /* Todo Status Colors - Dark Mode */
+  --status-pending-bg: #78350f;
+  --status-pending-text: #fcd34d;
+  --status-in-progress-bg: #1e3a8a;
+  --status-in-progress-text: #93c5fd;
+  --status-completed-bg: #14532d;
+  --status-completed-text: #86efac;
+
+  /* Additional theme colors for dark mode */
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-hover: #334155;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-border: #334155;
+  --color-primary-500: #60a5fa;
 }
 
 /* Layout utilities */
@@ -250,6 +257,12 @@ body {
   line-height: var(--line-height-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme transition for all elements */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Focus Ring Utilities */
