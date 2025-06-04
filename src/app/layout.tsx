@@ -4,8 +4,11 @@ import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ToastProvider } from "@/components/ui/toast";
 import { MSWInit } from "./msw-init";
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,25 +25,32 @@ export const metadata: Metadata = {
   description: "A simple TODO application",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MSWInit />
-        <ThemeProvider>
-          <QueryProvider>
-            <AuthProvider>
-              {children}
-              <ToastProvider />
-            </AuthProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <NextIntlClientProvider messages={messages}>
+          <LocaleProvider initialLocale={locale as 'ja' | 'en'}>
+            <ThemeProvider>
+              <QueryProvider>
+                <AuthProvider>
+                  {children}
+                  <ToastProvider />
+                </AuthProvider>
+              </QueryProvider>
+            </ThemeProvider>
+          </LocaleProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

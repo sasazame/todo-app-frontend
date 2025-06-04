@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import TodoItem from '@/components/TodoItem';
 import TodoForm from '@/components/TodoForm';
@@ -14,6 +15,7 @@ import { showSuccess, showError } from '@/components/ui/toast';
 import { Modal, Button } from '@/components/ui';
 
 function TodoApp() {
+  const t = useTranslations();
   const queryClient = useQueryClient();
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
@@ -48,27 +50,27 @@ function TodoApp() {
 
   const createMutation = useMutation({
     mutationFn: todoApi.create,
-    onSuccess: (newTodo) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       setIsAddingTodo(false);
       setParentIdForNewTodo(null);
-      showSuccess(`Todo "${newTodo.title}" created successfully!`);
+      showSuccess(t('todo.todoAdded'));
     },
     onError: (error) => {
-      showError(error instanceof Error ? error.message : 'Failed to create todo');
+      showError(error instanceof Error ? error.message : t('errors.general'));
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdateTodoDto }) => 
       todoApi.update(id, data),
-    onSuccess: (updatedTodo) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
       setEditingTodo(null);
-      showSuccess(`Todo "${updatedTodo.title}" updated successfully!`);
+      showSuccess(t('todo.todoUpdated'));
     },
     onError: (error) => {
-      showError(error instanceof Error ? error.message : 'Failed to update todo');
+      showError(error instanceof Error ? error.message : t('errors.general'));
     },
   });
 
@@ -76,12 +78,11 @@ function TodoApp() {
     mutationFn: todoApi.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
-      const todoTitle = deletingTodo?.title || 'Todo';
       setDeletingTodo(null);
-      showSuccess(`"${todoTitle}" deleted successfully!`);
+      showSuccess(t('todo.todoDeleted'));
     },
     onError: (error) => {
-      showError(error instanceof Error ? error.message : 'Failed to delete todo');
+      showError(error instanceof Error ? error.message : t('errors.general'));
     },
   });
 
@@ -142,7 +143,7 @@ function TodoApp() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-muted-foreground">Loading...</div>
+        <div className="text-lg text-muted-foreground">{t('common.loading')}</div>
       </div>
     );
   }
@@ -150,7 +151,7 @@ function TodoApp() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-destructive">Error loading todos</div>
+        <div className="text-lg text-destructive">{t('errors.general')}</div>
       </div>
     );
   }
@@ -168,7 +169,7 @@ function TodoApp() {
                 }}
                 className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow-lg transition-all"
               >
-                Add New Todo
+                {t('todo.addTodo')}
               </button>
             </div>
             <TodoStatusFilter
@@ -179,7 +180,7 @@ function TodoApp() {
 
         {todos.length === 0 ? (
           <div className="text-center py-12 bg-card rounded-lg shadow">
-            <p className="text-muted-foreground text-lg">No todos yet. Create your first todo!</p>
+            <p className="text-muted-foreground text-lg">{t('todo.noTodos')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -221,9 +222,9 @@ function TodoApp() {
         {deletingTodo && (
           <Modal open={true} onClose={cancelDelete}>
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">TODOを削除</h2>
+              <h2 className="text-xl font-semibold">{t('todo.deleteTodo')}</h2>
               <p className="text-muted-foreground">
-                「{deletingTodo.title}」を削除してもよろしいですか？この操作は取り消せません。
+                {t('todo.confirmDelete')}
               </p>
               <div className="flex gap-3 justify-end">
                 <Button
@@ -231,14 +232,14 @@ function TodoApp() {
                   onClick={cancelDelete}
                   disabled={deleteMutation.isPending}
                 >
-                  キャンセル
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   variant="danger"
                   onClick={confirmDelete}
                   disabled={deleteMutation.isPending}
                 >
-                  {deleteMutation.isPending ? '削除中...' : '削除'}
+                  {deleteMutation.isPending ? t('common.loading') : t('common.delete')}
                 </Button>
               </div>
             </div>

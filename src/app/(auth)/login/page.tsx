@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, LogIn, CheckCircle, Mail, Lock, Sparkles } from 'lucide-react';
@@ -11,6 +12,7 @@ import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
 import { useLogin, useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
+  const t = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
@@ -30,9 +32,9 @@ export default function LoginPage() {
   useEffect(() => {
     // Check for registration success message
     if (searchParams.get('registered') === 'true') {
-      setSuccessMessage('Account created successfully! Please log in to continue.');
+      setSuccessMessage(t('auth.registerSuccess'));
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   // Redirect when authenticated
   useEffect(() => {
@@ -65,9 +67,9 @@ export default function LoginPage() {
                 <Sparkles className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">{t('auth.login')}</h1>
             <p className="text-white/70">
-              Enter your credentials to access your account
+              {t('auth.loginDescription')}
             </p>
           </div>
 
@@ -83,7 +85,7 @@ export default function LoginPage() {
               <FloatingInput
                 {...register('email')}
                 type="email"
-                label="Email Address"
+                label={t('auth.email')}
                 error={errors.email?.message}
                 autoComplete="email"
                 disabled={isLoading}
@@ -95,7 +97,7 @@ export default function LoginPage() {
               <FloatingInput
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
-                label="Password"
+                label={t('auth.password')}
                 error={errors.password?.message}
                 autoComplete="current-password"
                 disabled={isLoading}
@@ -122,7 +124,7 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="text-blue-300 hover:text-blue-200 transition-colors"
               >
-                Forgot password?
+                {t('auth.forgotPassword')}
               </Link>
             </div>
 
@@ -133,16 +135,16 @@ export default function LoginPage() {
               loading={isLoading}
               leftIcon={!isLoading && <LogIn className="h-5 w-5" />}
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? t('common.loading') : t('auth.login')}
             </Button>
 
             <div className="text-center text-sm text-white/70">
-              Don&apos;t have an account?{' '}
+              {t('auth.dontHaveAccount')}{' '}
               <Link
                 href="/register"
                 className="text-blue-300 hover:text-blue-200 transition-colors font-medium"
               >
-                Sign up
+                {t('auth.register')}
               </Link>
             </div>
           </form>
