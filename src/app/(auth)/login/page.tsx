@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, LogIn, CheckCircle } from 'lucide-react';
-import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui';
+import { Eye, EyeOff, LogIn, CheckCircle, Mail, Lock, Sparkles } from 'lucide-react';
+import { Button, FloatingInput } from '@/components/ui';
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth';
 import { useLogin, useAuth } from '@/hooks/useAuth';
 
@@ -54,50 +54,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-2 text-center">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      {/* Premium Glass Card */}
+      <div className="w-full max-w-md animate-float">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl">
+          {/* Brand Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl">
+                <Sparkles className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+            <p className="text-white/70">
+              Enter your credentials to access your account
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {successMessage && (
-              <div className="p-3 text-sm text-green-800 bg-green-50 border border-green-200 rounded-md flex items-center gap-2">
+              <div className="p-4 text-sm text-green-100 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center gap-2 backdrop-blur-sm animate-slide-in-top">
                 <CheckCircle className="h-4 w-4" />
                 {successMessage}
               </div>
             )}
             
-
             <div>
-              <Input
+              <FloatingInput
                 {...register('email')}
                 type="email"
-                label="Email"
-                placeholder="Enter your email"
+                label="Email Address"
                 error={errors.email?.message}
                 autoComplete="email"
                 disabled={isLoading}
+                leftIcon={<Mail className="h-4 w-4" />}
               />
             </div>
 
             <div>
-              <Input
+              <FloatingInput
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 label="Password"
-                placeholder="Enter your password"
                 error={errors.password?.message}
                 autoComplete="current-password"
                 disabled={isLoading}
+                leftIcon={<Lock className="h-4 w-4" />}
                 rightIcon={
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-white/70 hover:text-white transition-colors"
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -113,7 +120,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-sm">
               <Link
                 href="/forgot-password"
-                className="text-primary hover:underline focus:outline-none focus:underline"
+                className="text-purple-300 hover:text-purple-200 transition-colors"
               >
                 Forgot password?
               </Link>
@@ -121,26 +128,26 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 border-0 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]"
               size="lg"
               loading={isLoading}
-              leftIcon={!isLoading && <LogIn className="h-4 w-4" />}
+              leftIcon={!isLoading && <LogIn className="h-5 w-5" />}
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-white/70">
               Don&apos;t have an account?{' '}
               <Link
                 href="/register"
-                className="text-primary hover:underline focus:outline-none focus:underline"
+                className="text-purple-300 hover:text-purple-200 transition-colors font-medium"
               >
                 Sign up
               </Link>
             </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
