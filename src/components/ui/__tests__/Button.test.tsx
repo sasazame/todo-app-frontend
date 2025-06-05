@@ -18,7 +18,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('bg-gray-600');
 
     rerender(<Button variant="ghost">Ghost</Button>);
-    expect(screen.getByRole('button')).toHaveClass('text-gray-700');
+    expect(screen.getByRole('button')).toHaveClass('text-foreground');
 
     rerender(<Button variant="danger">Danger</Button>);
     expect(screen.getByRole('button')).toHaveClass('bg-red-600');

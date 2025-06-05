@@ -45,6 +45,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Apply theme to document
     document.documentElement.setAttribute('data-theme', theme);
     
+    // Add/remove dark class for Tailwind CSS
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
     // Save to localStorage
     localStorage.setItem(THEME_KEY, theme);
   }, [theme, mounted]);

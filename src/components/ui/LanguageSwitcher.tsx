@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useLocale } from '@/contexts/LocaleContext';
-import { Modal } from './Modal';
+import { Modal, ModalHeader, ModalTitle, ModalContent } from './Modal';
 import { Globe, Check } from 'lucide-react';
 import { type Locale, locales } from '@/i18n/config';
 
@@ -42,8 +42,11 @@ export function LanguageSwitcher() {
         open={isOpen}
         onClose={() => setIsOpen(false)}
       >
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">{t('language')}</h2>
+        <ModalHeader onClose={() => setIsOpen(false)}>
+          <ModalTitle>{t('language')}</ModalTitle>
+        </ModalHeader>
+        
+        <ModalContent>
           <div className="space-y-2">
             {locales.map((loc) => (
               <button
@@ -68,7 +71,7 @@ export function LanguageSwitcher() {
               </button>
             ))}
           </div>
-        </div>
+        </ModalContent>
       </Modal>
     </>
   );

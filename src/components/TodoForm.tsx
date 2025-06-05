@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { CreateTodoDto } from '@/types/todo';
-import { Modal } from '@/components/ui';
+import { Modal, ModalHeader, ModalTitle, ModalContent } from '@/components/ui';
 import { Input } from '@/components/ui';
 import { TextArea } from '@/components/ui';
 import { Button } from '@/components/ui';
@@ -43,9 +43,11 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
 
   return (
     <Modal open={true} onClose={onCancel}>
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{parentId ? t('todo.createSubtask') : t('todo.createNewTodo')}</h2>
-        
+      <ModalHeader onClose={onCancel}>
+        <ModalTitle>{parentId ? t('todo.createSubtask') : t('todo.createNewTodo')}</ModalTitle>
+      </ModalHeader>
+      
+      <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Input
@@ -70,7 +72,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="status" className="block text-sm font-medium mb-1">
+              <label htmlFor="status" className="block text-sm font-medium text-foreground mb-1">
                 {t('todo.todoStatus')}
               </label>
               <select
@@ -85,7 +87,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
             </div>
 
             <div>
-              <label htmlFor="priority" className="block text-sm font-medium mb-1">
+              <label htmlFor="priority" className="block text-sm font-medium text-foreground mb-1">
                 {t('todo.todoPriority')}
               </label>
               <select
@@ -126,7 +128,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
             </Button>
           </div>
         </form>
-      </div>
+      </ModalContent>
     </Modal>
   );
 }
