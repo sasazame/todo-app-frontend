@@ -22,7 +22,7 @@ export function ThemeToggle() {
       <span
         className={cn(
           'inline-block h-6 w-6 transform rounded-full',
-          'bg-white bg-neutral-900 shadow-lg',
+          'bg-white dark:bg-neutral-900 shadow-lg',
           'transition-all duration-300 ease-in-out',
           'border-2 border-neutral-300 dark:border-neutral-600',
           theme === 'dark' ? 'translate-x-7 ' : 'translate-x-1'

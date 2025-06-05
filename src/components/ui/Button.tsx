@@ -9,7 +9,7 @@ const buttonVariants = cva(
       variant: {
         primary: 'bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:ring-blue-500 border border-blue-700',
         secondary: 'bg-gray-600 text-white shadow-md hover:bg-gray-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:ring-gray-500 border border-gray-700',
-        ghost: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:shadow-sm hover:scale-[1.02] active:scale-[0.98] focus:ring-gray-400 border border-transparent hover:border-gray-300',
+        ghost: 'text-foreground hover:bg-muted hover:text-foreground hover:shadow-sm hover:scale-[1.02] active:scale-[0.98] focus:ring-ring border border-transparent hover:border-border',
         danger: 'bg-red-600 text-white shadow-md hover:bg-red-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] focus:ring-red-500 border border-red-700',
         outline: 'border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-md hover:scale-[1.02] active:scale-[0.98] focus:ring-blue-500',
       },

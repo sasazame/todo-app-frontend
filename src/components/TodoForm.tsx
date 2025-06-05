@@ -72,7 +72,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="status" className="block text-sm font-medium mb-1">
+              <label htmlFor="status" className="block text-sm font-medium text-foreground mb-1">
                 {t('todo.todoStatus')}
               </label>
               <select
@@ -87,7 +87,7 @@ export default function TodoForm({ onSubmit, onCancel, isSubmitting, parentId }:
             </div>
 
             <div>
-              <label htmlFor="priority" className="block text-sm font-medium mb-1">
+              <label htmlFor="priority" className="block text-sm font-medium text-foreground mb-1">
                 {t('todo.todoPriority')}
               </label>
               <select

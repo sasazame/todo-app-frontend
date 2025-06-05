@@ -149,7 +149,7 @@ function ProfilePage() {
         <div className="flex items-center gap-4 mb-8">
           <Link href="/">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               leftIcon={<ArrowLeft className="h-4 w-4" />}
             >

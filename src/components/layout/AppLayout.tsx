@@ -12,9 +12,7 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
-      {/* Background pattern */}
-      <div className="fixed inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
+    <div className="min-h-screen bg-background">{/* Single color background like profile page */}
       
       <Header />
       <Sidebar />
