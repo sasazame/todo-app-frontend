@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@layer base {
+  /* Grid pattern background */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgb(107 114 128 / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(107 114 128 / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .dark .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgb(156 163 175 / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(156 163 175 / 0.1) 1px, transparent 1px);
+  }
+}
+
 :root {
   /* Primary Colors - Blue based theme */
   --color-primary-50: #eff6ff;

@@ -13,6 +13,15 @@ jest.mock('@/lib/api');
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
   useSearchParams: jest.fn(),
+  usePathname: () => '/',
+}));
+
+// Mock framer-motion
+jest.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+  },
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock auth API
@@ -47,9 +56,19 @@ jest.mock('next-intl', () => ({
       'common.loading': 'Loading...',
       'errors.general': 'エラーが発生しました',
       'app.title': 'TODO App',
+      'app.subtitle': 'タスクを効率的に整理する',
       'header.profile': 'Profile',
       'header.logout': 'Logout',
+      'header.loggingOut': 'Logging out...',
       'common.language': 'Language',
+      'nav.home': 'Home',
+      'nav.todos': 'TODOs',
+      'nav.calendar': 'Calendar',
+      'nav.tags': 'Tags',
+      'nav.starred': 'Starred',
+      'nav.archive': 'Archive',
+      'nav.settings': 'Settings',
+      'nav.profile': 'Profile',
     };
     return translations[key] || key;
   },

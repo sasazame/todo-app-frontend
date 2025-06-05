@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AuthGuard } from '@/components/auth';
 import { Header } from '@/components/layout';
-import { Card, Input, Button, Modal } from '@/components/ui';
+import { Card, Input, Button, Modal, ModalHeader, ModalTitle, ModalContent } from '@/components/ui';
 import { showSuccess, showError } from '@/components/ui/toast';
 import { userApi } from '@/services/user';
 import { useAuth } from '@/hooks/useAuth';
@@ -218,9 +218,11 @@ function ProfilePage() {
         {/* Edit Profile Modal */}
         {isEditingProfile && (
           <Modal open={isEditingProfile} onClose={() => setIsEditingProfile(false)}>
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">{t('profile.editProfile')}</h2>
-              
+            <ModalHeader onClose={() => setIsEditingProfile(false)}>
+              <ModalTitle>{t('profile.editProfile')}</ModalTitle>
+            </ModalHeader>
+            
+            <ModalContent>
               <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-4">
                 <div>
                   <Input
@@ -259,16 +261,18 @@ function ProfilePage() {
                   </Button>
                 </div>
               </form>
-            </div>
+            </ModalContent>
           </Modal>
         )}
 
         {/* Change Password Modal */}
         {isChangingPassword && (
           <Modal open={isChangingPassword} onClose={() => setIsChangingPassword(false)}>
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">{t('profile.changePassword')}</h2>
-              
+            <ModalHeader onClose={() => setIsChangingPassword(false)}>
+              <ModalTitle>{t('profile.changePassword')}</ModalTitle>
+            </ModalHeader>
+            
+            <ModalContent>
               <form onSubmit={changePasswordForm.handleSubmit(handlePasswordChange)} className="space-y-4">
                 <div>
                   <Input
@@ -317,16 +321,19 @@ function ProfilePage() {
                   </Button>
                 </div>
               </form>
-            </div>
+            </ModalContent>
           </Modal>
         )}
 
         {/* Delete Account Modal */}
         {isDeletingAccount && (
           <Modal open={isDeletingAccount} onClose={() => setIsDeletingAccount(false)}>
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-destructive">{t('profile.deleteAccount')}</h2>
-              <p className="text-muted-foreground">
+            <ModalHeader onClose={() => setIsDeletingAccount(false)}>
+              <ModalTitle className="text-destructive">{t('profile.deleteAccount')}</ModalTitle>
+            </ModalHeader>
+            
+            <ModalContent>
+              <p className="text-muted-foreground mb-4">
                 {t('profile.confirmAccountDelete')}
               </p>
               <div className="flex gap-3 justify-end">
@@ -345,7 +352,7 @@ function ProfilePage() {
                   {deleteAccountMutation.isPending ? t('common.loading') : t('profile.deleteAccount')}
                 </Button>
               </div>
-            </div>
+            </ModalContent>
           </Modal>
         )}
       </main>

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Todo, UpdateTodoDto } from '@/types/todo';
-import { Modal } from '@/components/ui';
+import { Modal, ModalHeader, ModalTitle, ModalContent } from '@/components/ui';
 import { Input } from '@/components/ui';
 import { TextArea } from '@/components/ui';
 import { Button } from '@/components/ui';
@@ -47,9 +47,11 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
 
   return (
     <Modal open={true} onClose={onCancel}>
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('todo.editTodo')}</h2>
-        
+      <ModalHeader onClose={onCancel}>
+        <ModalTitle>{t('todo.editTodo')}</ModalTitle>
+      </ModalHeader>
+      
+      <ModalContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Input
@@ -140,7 +142,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
             </div>
           </div>
         </form>
-      </div>
+      </ModalContent>
     </Modal>
   );
 }

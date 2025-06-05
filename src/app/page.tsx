@@ -8,7 +8,7 @@ import TodoForm from '@/components/TodoForm';
 import TodoEditForm from '@/components/TodoEditForm';
 import TodoStatusFilter from '@/components/TodoStatusFilter';
 import { AuthGuard } from '@/components/auth';
-import { Header } from '@/components/layout';
+import { AppLayout } from '@/components/layout';
 import { todoApi } from '@/lib/api';
 import { Todo, CreateTodoDto, UpdateTodoDto, TodoStatus } from '@/types/todo';
 import { showSuccess, showError } from '@/components/ui/toast';
@@ -157,26 +157,32 @@ function TodoApp() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container py-8">
-          <div className="mb-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => {
-                  setParentIdForNewTodo(null);
-                  setIsAddingTodo(true);
-                }}
-                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow-lg transition-all"
-              >
-                {t('todo.addTodo')}
-              </button>
-            </div>
-            <TodoStatusFilter
-              selectedStatus={selectedStatus}
-              onStatusChange={setSelectedStatus}
-            />
+    <AppLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {t('app.title')}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              {t('app.subtitle')}
+            </p>
           </div>
+          <button
+            onClick={() => {
+              setParentIdForNewTodo(null);
+              setIsAddingTodo(true);
+            }}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow-lg transition-all"
+          >
+            {t('todo.addTodo')}
+          </button>
+        </div>
+        
+        <TodoStatusFilter
+          selectedStatus={selectedStatus}
+          onStatusChange={setSelectedStatus}
+        />
 
         {todos.length === 0 ? (
           <div className="text-center py-12 bg-card rounded-lg shadow">
@@ -245,8 +251,8 @@ function TodoApp() {
             </div>
           </Modal>
         )}
-        </main>
       </div>
+    </AppLayout>
   );
 }
 

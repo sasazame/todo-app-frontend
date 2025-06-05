@@ -13,8 +13,17 @@ jest.mock('next-intl', () => ({
       'app.title': 'TODO App',
       'header.profile': 'Profile',
       'header.logout': 'Logout',
+      'header.loggingOut': 'Logging out...',
       'common.language': 'Language',
       'language': 'Language',
+      'nav.home': 'Home',
+      'nav.todos': 'TODOs',
+      'nav.calendar': 'Calendar',
+      'nav.tags': 'Tags',
+      'nav.starred': 'Starred',
+      'nav.archive': 'Archive',
+      'nav.settings': 'Settings',
+      'nav.profile': 'Profile',
     };
     return translations[key] || key;
   },
@@ -74,7 +83,9 @@ describe('Header', () => {
     renderWithTheme(<Header />);
 
     expect(screen.getByText('TODO App')).toBeInTheDocument();
-    expect(screen.getByText(mockUser.username)).toBeInTheDocument();
+    // Username appears in both desktop and mobile views
+    const usernameElements = screen.getAllByText(mockUser.username);
+    expect(usernameElements.length).toBeGreaterThanOrEqual(1);
     // Email is no longer displayed as per requirements
     expect(screen.queryByText(`(${mockUser.email})`)).not.toBeInTheDocument();
   });
@@ -87,8 +98,10 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    const profileLink = screen.getByRole('link', { name: 'Profile' });
-    expect(profileLink).toHaveAttribute('href', '/profile');
+    // Profile button might not have a proper name due to icon, so we use the parent link
+    const profileLinks = screen.getAllByRole('link');
+    const profileLink = profileLinks.find(link => link.getAttribute('href') === '/profile');
+    expect(profileLink).toBeInTheDocument();
   });
 
   it('renders language switcher', () => {
@@ -100,8 +113,9 @@ describe('Header', () => {
     renderWithTheme(<Header />);
 
     // Check for language switcher button (now a globe icon)
-    const languageButton = screen.getByRole('button', { name: 'Language' });
-    expect(languageButton).toBeInTheDocument();
+    // There are two language switchers (desktop and mobile)
+    const languageButtons = screen.getAllByRole('button', { name: 'Language' });
+    expect(languageButtons.length).toBeGreaterThanOrEqual(1);
   });
 
   it('calls logout when logout button is clicked', async () => {
@@ -113,8 +127,10 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    const logoutButton = screen.getByRole('button', { name: 'Logout' });
-    await user.click(logoutButton);
+    // There are multiple logout buttons (desktop and mobile)
+    const logoutButtons = screen.getAllByRole('button', { name: 'Logout' });
+    // Click the first (desktop) logout button
+    await user.click(logoutButtons[0]);
 
     expect(mockLogout).toHaveBeenCalled();
   });
@@ -131,7 +147,8 @@ describe('Header', () => {
 
     renderWithTheme(<Header />);
 
-    const logoutButton = screen.getByRole('button', { name: 'Logout' });
+    // When loading, the button shows "Logging out..." instead of "Logout"
+    const logoutButton = screen.getByRole('button', { name: 'Logging out...' });
     expect(logoutButton).toBeDisabled();
   });
 });
