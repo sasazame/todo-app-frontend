@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { Todo, UpdateTodoDto } from '@/types/todo';
 import { todoApi } from '@/lib/api';
 import { Button } from '@/components/ui';
@@ -17,6 +18,7 @@ interface TodoItemProps {
 }
 
 export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level = 0 }: TodoItemProps) {
+  const t = useTranslations();
   const [showChildren, setShowChildren] = useState(false);
   const [isHoveringCheckbox, setIsHoveringCheckbox] = useState(false);
   const queryClient = useQueryClient();
@@ -37,7 +39,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
     },
     onSuccess: (updatedTodo) => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
-      showSuccess(`タスクを${updatedTodo.status === 'DONE' ? '完了' : '未完了'}にしました`);
+      showSuccess(updatedTodo.status === 'DONE' ? t('todo.todoCompleted') : t('todo.todoUpdated'));
     },
   });
 
@@ -90,7 +92,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
               }
               ${toggleStatusMutation.isPending ? 'opacity-50' : ''}
             `}
-            aria-label={todo.status === 'DONE' ? 'Mark as incomplete' : 'Mark as complete'}
+            aria-label={todo.status === 'DONE' ? t('todo.markIncomplete') : t('todo.markComplete')}
           >
             {(todo.status === 'DONE' || isHoveringCheckbox) && (
               <Check className="w-3 h-3" strokeWidth={3} />
@@ -105,7 +107,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
                   <button
                     onClick={() => setShowChildren(!showChildren)}
                     className="p-1 hover:bg-accent rounded transition-colors"
-                    aria-label={showChildren ? 'Hide subtasks' : 'Show subtasks'}
+                    aria-label={showChildren ? t('todo.hideSubtasks') : t('todo.showSubtasks')}
                   >
                     {showChildren ? (
                       <ChevronDown className="w-4 h-4" />
@@ -124,10 +126,10 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
                     todo.status
                   )}`}
                 >
-                  {todo.status === 'TODO' ? '未着手' : todo.status === 'IN_PROGRESS' ? '進行中' : '完了'}
+                  {t(`todo.statusOptions.${todo.status}`)}
                 </span>
                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(todo.priority)}`}>
-                  {todo.priority === 'HIGH' ? '高' : todo.priority === 'MEDIUM' ? '中' : '低'}
+                  {t(`todo.priorityOptions.${todo.priority}`)}
                 </span>
               </div>
             </div>
@@ -141,7 +143,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 {todo.dueDate && (
-                  <span>期限: {new Date(todo.dueDate).toLocaleDateString('ja-JP')}</span>
+                  <span>{t('todo.dueDateLabel')} {new Date(todo.dueDate).toLocaleDateString()}</span>
                 )}
                 {level === 0 && (
                   <Button
@@ -150,7 +152,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
                     onClick={() => onAddChild(todo.id)}
                     className="text-xs"
                   >
-                    サブタスクを追加
+                    {t('todo.addSubtask')}
                   </Button>
                 )}
               </div>
@@ -162,7 +164,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
                 onClick={() => onUpdate(todo.id, todo)}
                 leftIcon={<Edit2 className="w-3 h-3" />}
               >
-                編集
+                {t('common.edit')}
               </Button>
             </div>
           </div>
@@ -185,7 +187,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onAddChild, level =
       )}
       
       {showChildren && isLoading && (
-        <div className="ml-8 text-muted-foreground">サブタスクを読み込み中...</div>
+        <div className="ml-8 text-muted-foreground">{t('todo.loadingSubtasks')}</div>
       )}
     </div>
   );

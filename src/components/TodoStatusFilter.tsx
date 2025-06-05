@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { TodoStatus } from '@/types/todo';
 import { Button } from '@/components/ui';
 
@@ -8,14 +9,16 @@ interface TodoStatusFilterProps {
   onStatusChange: (status: TodoStatus | 'ALL') => void;
 }
 
-const statusOptions: { value: TodoStatus | 'ALL'; label: string }[] = [
-  { value: 'ALL', label: 'すべて' },
-  { value: 'TODO', label: '未着手' },
-  { value: 'IN_PROGRESS', label: '進行中' },
-  { value: 'DONE', label: '完了' },
-];
-
 export default function TodoStatusFilter({ selectedStatus, onStatusChange }: TodoStatusFilterProps) {
+  const t = useTranslations();
+
+  const statusOptions: { value: TodoStatus | 'ALL'; label: string }[] = [
+    { value: 'ALL', label: t('todo.filter.all') },
+    { value: 'TODO', label: t('todo.statusOptions.TODO') },
+    { value: 'IN_PROGRESS', label: t('todo.statusOptions.IN_PROGRESS') },
+    { value: 'DONE', label: t('todo.statusOptions.DONE') },
+  ];
+
   return (
     <div className="flex gap-2 flex-wrap">
       {statusOptions.map((option) => (

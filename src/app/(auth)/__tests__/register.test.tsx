@@ -37,6 +37,42 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
+// Mock useTranslations
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'auth.register': 'Register',
+      'auth.createAccount': 'Create account',
+      'auth.getStarted': 'Enter your information to get started',
+      'auth.username': 'Username',
+      'auth.email': 'Email',
+      'auth.password': 'Password',
+      'auth.confirmPassword': 'Confirm Password',
+      'auth.termsText': 'By creating an account, you agree to our',
+      'auth.termsOfService': 'Terms of Service',
+      'auth.privacyPolicy': 'Privacy Policy',
+      'auth.agreeToTerms': '',
+      'auth.alreadyHaveAccount': 'Already have an account?',
+      'auth.login': 'Login',
+      'auth.creatingAccount': 'Creating account...',
+      'passwordStrength.label': 'Password Strength',
+      'passwordStrength.requirements': 'Requirements:',
+      'passwordStrength.rules.minLength': 'At least 8 characters',
+      'passwordStrength.rules.uppercase': 'One uppercase letter',
+      'passwordStrength.rules.lowercase': 'One lowercase letter',
+      'passwordStrength.rules.number': 'One number',
+      'passwordStrength.rules.special': 'One special character',
+      'passwordStrength.levels.veryWeak': 'Very Weak',
+      'passwordStrength.levels.weak': 'Weak',
+      'passwordStrength.levels.fair': 'Fair',
+      'passwordStrength.levels.good': 'Good',
+      'passwordStrength.levels.strong': 'Strong',
+      'common.loading': 'Loading...',
+    };
+    return translations[key] || key;
+  },
+}));
+
 describe('RegisterPage', () => {
   const mockPush = jest.fn();
   const mockRouter = {
@@ -66,11 +102,11 @@ describe('RegisterPage', () => {
     expect(screen.getByRole('heading', { name: /create account/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Password')).toBeInTheDocument();
+    expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
     expect(screen.getByText(/already have an account/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /sign in/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument();
   });
 
   it('shows validation errors for empty fields', async () => {
@@ -92,7 +128,7 @@ describe('RegisterPage', () => {
     const user = userEvent.setup();
     render(<RegisterPage />, { wrapper });
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
+    const passwordInput = screen.getByLabelText('Password');
 
     // Initially, no password strength indicator
     expect(screen.queryByText(/password requirements/i)).not.toBeInTheDocument();
@@ -109,8 +145,8 @@ describe('RegisterPage', () => {
     const user = userEvent.setup();
     render(<RegisterPage />, { wrapper });
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
+    const passwordInput = screen.getByLabelText('Password');
+    const confirmPasswordInput = screen.getByLabelText('Confirm Password');
 
     await user.type(passwordInput, 'ValidPass123!');
     await user.type(confirmPasswordInput, 'DifferentPass123!');
@@ -144,8 +180,8 @@ describe('RegisterPage', () => {
     const user = userEvent.setup();
     render(<RegisterPage />, { wrapper });
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
+    const passwordInput = screen.getByLabelText('Password');
+    const confirmPasswordInput = screen.getByLabelText('Confirm Password');
 
     expect(passwordInput).toHaveAttribute('type', 'password');
     expect(confirmPasswordInput).toHaveAttribute('type', 'password');
@@ -183,8 +219,8 @@ describe('RegisterPage', () => {
 
     const usernameInput = screen.getByLabelText(/username/i);
     const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
+    const passwordInput = screen.getByLabelText('Password');
+    const confirmPasswordInput = screen.getByLabelText('Confirm Password');
 
     await user.type(usernameInput, 'testuser');
     await user.type(emailInput, 'test@example.com');
@@ -221,13 +257,13 @@ describe('RegisterPage', () => {
   it('has correct links', () => {
     render(<RegisterPage />, { wrapper });
 
-    const signInLink = screen.getByRole('link', { name: /sign in/i });
+    const signInLink = screen.getByRole('link', { name: 'Login' });
     expect(signInLink).toHaveAttribute('href', '/login');
 
-    const termsLink = screen.getByRole('link', { name: /terms of service/i });
+    const termsLink = screen.getByRole('link', { name: 'Terms of Service' });
     expect(termsLink).toHaveAttribute('href', '/terms');
 
-    const privacyLink = screen.getByRole('link', { name: /privacy policy/i });
+    const privacyLink = screen.getByRole('link', { name: 'Privacy Policy' });
     expect(privacyLink).toHaveAttribute('href', '/privacy');
   });
 
@@ -235,7 +271,7 @@ describe('RegisterPage', () => {
     const user = userEvent.setup();
     render(<RegisterPage />, { wrapper });
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
+    const passwordInput = screen.getByLabelText('Password');
     await user.type(passwordInput, 'StrongPass123!');
 
     // All requirements should show as met (with check marks)

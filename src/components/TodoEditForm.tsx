@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Todo, UpdateTodoDto } from '@/types/todo';
 import { Modal } from '@/components/ui';
 import { Input } from '@/components/ui';
@@ -18,6 +19,7 @@ interface TodoEditFormProps {
 }
 
 export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSubmitting, isDeleting }: TodoEditFormProps) {
+  const t = useTranslations();
   const {
     register,
     handleSubmit,
@@ -46,15 +48,15 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
   return (
     <Modal open={true} onClose={onCancel}>
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">TODOを編集</h2>
+        <h2 className="text-xl font-semibold">{t('todo.editTodo')}</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Input
-              {...register('title', { required: 'Title is required' })}
+              {...register('title', { required: t('todo.titleRequired') })}
               type="text"
               id="title"
-              label="Title *"
+              label={`${t('todo.todoTitle')} *`}
             />
             {errors.title && (
               <p className="mt-1 text-sm text-destructive">{errors.title.message}</p>
@@ -66,38 +68,38 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
               {...register('description')}
               id="description"
               rows={3}
-              label="Description"
+              label={t('todo.todoDescription')}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="status" className="block text-sm font-medium mb-1">
-                Status
+                {t('todo.todoStatus')}
               </label>
               <select
                 {...register('status')}
                 id="status"
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
               >
-                <option value="TODO">未着手</option>
-                <option value="IN_PROGRESS">進行中</option>
-                <option value="DONE">完了</option>
+                <option value="TODO">{t('todo.statusOptions.TODO')}</option>
+                <option value="IN_PROGRESS">{t('todo.statusOptions.IN_PROGRESS')}</option>
+                <option value="DONE">{t('todo.statusOptions.DONE')}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="priority" className="block text-sm font-medium mb-1">
-                Priority
+                {t('todo.todoPriority')}
               </label>
               <select
                 {...register('priority')}
                 id="priority"
                 className="w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background text-foreground"
               >
-                <option value="LOW">低</option>
-                <option value="MEDIUM">中</option>
-                <option value="HIGH">高</option>
+                <option value="LOW">{t('todo.priorityOptions.LOW')}</option>
+                <option value="MEDIUM">{t('todo.priorityOptions.MEDIUM')}</option>
+                <option value="HIGH">{t('todo.priorityOptions.HIGH')}</option>
               </select>
             </div>
           </div>
@@ -107,7 +109,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
               {...register('dueDate')}
               type="date"
               id="dueDate"
-              label="Due Date"
+              label={t('todo.dueDate')}
             />
           </div>
 
@@ -118,7 +120,7 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
               onClick={onDelete}
               disabled={isSubmitting || isDeleting}
             >
-              {isDeleting ? '削除中...' : '削除'}
+              {isDeleting ? t('common.loading') : t('common.delete')}
             </Button>
             <div className="flex gap-3">
               <Button
@@ -127,13 +129,13 @@ export default function TodoEditForm({ todo, onSubmit, onCancel, onDelete, isSub
                 onClick={onCancel}
                 disabled={isSubmitting || isDeleting}
               >
-                キャンセル
+                {t('common.cancel')}
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting || isDeleting}
               >
-                {isSubmitting ? '更新中...' : '更新'}
+                {isSubmitting ? t('todo.updating') : t('todo.updateTodo')}
               </Button>
             </div>
           </div>

@@ -2,6 +2,35 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TodoForm from '../TodoForm';
 
+// Mock useTranslations
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'todo.createNewTodo': 'Create New TODO',
+      'todo.editTodo': 'Edit TODO',
+      'todo.todoTitle': 'Title',
+      'todo.titleRequired': 'Title is required',
+      'todo.todoDescription': 'Description',
+      'todo.todoStatus': 'Status',
+      'todo.todoPriority': 'Priority',
+      'todo.dueDate': 'Due Date',
+      'todo.statusOptions.TODO': 'TODO',
+      'todo.statusOptions.IN_PROGRESS': 'In Progress',
+      'todo.statusOptions.DONE': 'Done',
+      'todo.priorityOptions.LOW': 'Low',
+      'todo.priorityOptions.MEDIUM': 'Medium',
+      'todo.priorityOptions.HIGH': 'High',
+      'todo.createTodo': 'Create TODO',
+      'todo.updateTodo': 'Update TODO',
+      'todo.creating': 'Creating...',
+      'todo.updating': 'Updating...',
+      'common.cancel': 'Cancel',
+      'common.loading': 'Loading...',
+    };
+    return translations[key] || key;
+  },
+}));
+
 describe('TodoForm', () => {
   const mockOnSubmit = jest.fn();
   const mockOnCancel = jest.fn();
@@ -18,11 +47,11 @@ describe('TodoForm', () => {
       />
     );
 
-    expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/status/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/priority/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/due date/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Title *')).toBeInTheDocument();
+    expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    expect(screen.getByLabelText('Status')).toBeInTheDocument();
+    expect(screen.getByLabelText('Priority')).toBeInTheDocument();
+    expect(screen.getByLabelText('Due Date')).toBeInTheDocument();
   });
 
   it('shows validation error when title is empty', async () => {
@@ -33,7 +62,7 @@ describe('TodoForm', () => {
       />
     );
 
-    const submitButton = screen.getByText('Create Todo');
+    const submitButton = screen.getByText('Create TODO');
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -58,7 +87,7 @@ describe('TodoForm', () => {
     await user.selectOptions(screen.getByLabelText(/status/i), 'IN_PROGRESS');
     await user.selectOptions(screen.getByLabelText(/priority/i), 'HIGH');
 
-    const submitButton = screen.getByText('Create Todo');
+    const submitButton = screen.getByText('Create TODO');
     await user.click(submitButton);
 
     await waitFor(() => {

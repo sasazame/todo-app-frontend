@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,6 +40,7 @@ type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
 function ProfilePage() {
+  const t = useTranslations();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { user, logout } = useAuth();
@@ -59,10 +61,10 @@ function ProfilePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user', user?.id] });
       setIsEditingProfile(false);
-      showSuccess('Profile updated successfully!');
+      showSuccess(t('profile.profileUpdated'));
     },
     onError: (error) => {
-      showError(error instanceof Error ? error.message : 'Failed to update profile');
+      showError(error instanceof Error ? error.message : t('errors.general'));
     },
   });
 
@@ -71,11 +73,11 @@ function ProfilePage() {
     mutationFn: (data: ChangePasswordDto) => userApi.changePassword(user!.id, data),
     onSuccess: () => {
       setIsChangingPassword(false);
-      showSuccess('Password changed successfully!');
+      showSuccess(t('profile.passwordChanged'));
       changePasswordForm.reset();
     },
     onError: (error) => {
-      showError(error instanceof Error ? error.message : 'Failed to change password');
+      showError(error instanceof Error ? error.message : t('errors.general'));
     },
   });
 
@@ -83,12 +85,12 @@ function ProfilePage() {
   const deleteAccountMutation = useMutation({
     mutationFn: () => userApi.delete(user!.id),
     onSuccess: async () => {
-      showSuccess('Account deleted successfully');
+      showSuccess(t('profile.accountDeleted'));
       await logout();
       router.push('/register');
     },
     onError: (error) => {
-      showError(error instanceof Error ? error.message : 'Failed to delete account');
+      showError(error instanceof Error ? error.message : t('errors.general'));
     },
   });
 
@@ -151,38 +153,38 @@ function ProfilePage() {
               size="sm"
               leftIcon={<ArrowLeft className="h-4 w-4" />}
             >
-              タスク一覧に戻る
+              {t('common.back')}
             </Button>
           </Link>
         </div>
-        <h1 className="text-3xl font-bold mb-8">プロフィール設定</h1>
+        <h1 className="text-3xl font-bold mb-8">{t('profile.title')}</h1>
 
         {/* Profile Information */}
         <Card className="p-6 mb-6">
           <div className="flex justify-between items-start mb-4">
-            <h2 className="text-xl font-semibold">ユーザー情報</h2>
+            <h2 className="text-xl font-semibold">{t('profile.personalInfo')}</h2>
             <Button
               variant="secondary"
               size="sm"
               onClick={() => setIsEditingProfile(true)}
             >
-              編集
+              {t('common.edit')}
             </Button>
           </div>
           
           <div className="space-y-3">
             <div>
-              <label className="text-sm text-muted-foreground">ユーザー名</label>
+              <label className="text-sm text-muted-foreground">{t('auth.username')}</label>
               <p className="text-lg">{displayUser?.username}</p>
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">メールアドレス</label>
+              <label className="text-sm text-muted-foreground">{t('auth.email')}</label>
               <p className="text-lg">{displayUser?.email}</p>
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">登録日</label>
+              <label className="text-sm text-muted-foreground">{t('todo.createdAt')}</label>
               <p className="text-lg">
-                {displayUser?.createdAt ? new Date(displayUser.createdAt).toLocaleDateString('ja-JP') : '-'}
+                {displayUser?.createdAt ? new Date(displayUser.createdAt).toLocaleDateString() : '-'}
               </p>
             </div>
           </div>
@@ -190,26 +192,26 @@ function ProfilePage() {
 
         {/* Security Settings */}
         <Card className="p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">セキュリティ設定</h2>
+          <h2 className="text-xl font-semibold mb-4">{t('profile.accountSettings')}</h2>
           <Button
             variant="secondary"
             onClick={() => setIsChangingPassword(true)}
           >
-            パスワードを変更
+            {t('profile.changePassword')}
           </Button>
         </Card>
 
         {/* Danger Zone */}
         <Card className="p-6 border-destructive/50">
-          <h2 className="text-xl font-semibold mb-4 text-destructive">危険な操作</h2>
+          <h2 className="text-xl font-semibold mb-4 text-destructive">{t('profile.dangerZone')}</h2>
           <p className="text-muted-foreground mb-4">
-            アカウントを削除すると、すべてのデータが永久に失われます。この操作は取り消せません。
+            {t('profile.confirmAccountDelete')}
           </p>
           <Button
             variant="danger"
             onClick={() => setIsDeletingAccount(true)}
           >
-            アカウントを削除
+            {t('profile.deleteAccount')}
           </Button>
         </Card>
 
@@ -217,7 +219,7 @@ function ProfilePage() {
         {isEditingProfile && (
           <Modal open={isEditingProfile} onClose={() => setIsEditingProfile(false)}>
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">プロフィールを編集</h2>
+              <h2 className="text-xl font-semibold">{t('profile.editProfile')}</h2>
               
               <form onSubmit={profileForm.handleSubmit(handleProfileUpdate)} className="space-y-4">
                 <div>
@@ -225,7 +227,7 @@ function ProfilePage() {
                     {...profileForm.register('username')}
                     type="text"
                     id="username"
-                    label="ユーザー名"
+                    label={t('auth.username')}
                     error={profileForm.formState.errors.username?.message}
                   />
                 </div>
@@ -235,7 +237,7 @@ function ProfilePage() {
                     {...profileForm.register('email')}
                     type="email"
                     id="email"
-                    label="メールアドレス"
+                    label={t('auth.email')}
                     error={profileForm.formState.errors.email?.message}
                   />
                 </div>
@@ -247,13 +249,13 @@ function ProfilePage() {
                     onClick={() => setIsEditingProfile(false)}
                     disabled={updateProfileMutation.isPending}
                   >
-                    キャンセル
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     type="submit"
                     disabled={updateProfileMutation.isPending}
                   >
-                    {updateProfileMutation.isPending ? '更新中...' : '更新'}
+                    {updateProfileMutation.isPending ? t('common.loading') : t('profile.updateProfile')}
                   </Button>
                 </div>
               </form>
@@ -265,7 +267,7 @@ function ProfilePage() {
         {isChangingPassword && (
           <Modal open={isChangingPassword} onClose={() => setIsChangingPassword(false)}>
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">パスワードを変更</h2>
+              <h2 className="text-xl font-semibold">{t('profile.changePassword')}</h2>
               
               <form onSubmit={changePasswordForm.handleSubmit(handlePasswordChange)} className="space-y-4">
                 <div>
@@ -273,7 +275,7 @@ function ProfilePage() {
                     {...changePasswordForm.register('currentPassword')}
                     type="password"
                     id="currentPassword"
-                    label="現在のパスワード"
+                    label={t('profile.currentPassword')}
                     error={changePasswordForm.formState.errors.currentPassword?.message}
                   />
                 </div>
@@ -283,7 +285,7 @@ function ProfilePage() {
                     {...changePasswordForm.register('newPassword')}
                     type="password"
                     id="newPassword"
-                    label="新しいパスワード"
+                    label={t('profile.newPassword')}
                     error={changePasswordForm.formState.errors.newPassword?.message}
                   />
                 </div>
@@ -293,7 +295,7 @@ function ProfilePage() {
                     {...changePasswordForm.register('confirmPassword')}
                     type="password"
                     id="confirmPassword"
-                    label="新しいパスワード（確認）"
+                    label={t('profile.confirmNewPassword')}
                     error={changePasswordForm.formState.errors.confirmPassword?.message}
                   />
                 </div>
@@ -305,13 +307,13 @@ function ProfilePage() {
                     onClick={() => setIsChangingPassword(false)}
                     disabled={changePasswordMutation.isPending}
                   >
-                    キャンセル
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     type="submit"
                     disabled={changePasswordMutation.isPending}
                   >
-                    {changePasswordMutation.isPending ? '変更中...' : '変更'}
+                    {changePasswordMutation.isPending ? t('common.loading') : t('common.save')}
                   </Button>
                 </div>
               </form>
@@ -323,10 +325,9 @@ function ProfilePage() {
         {isDeletingAccount && (
           <Modal open={isDeletingAccount} onClose={() => setIsDeletingAccount(false)}>
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-destructive">アカウントの削除</h2>
+              <h2 className="text-xl font-semibold text-destructive">{t('profile.deleteAccount')}</h2>
               <p className="text-muted-foreground">
-                本当にアカウントを削除しますか？この操作は取り消せません。
-                すべてのTODOデータも一緒に削除されます。
+                {t('profile.confirmAccountDelete')}
               </p>
               <div className="flex gap-3 justify-end">
                 <Button
@@ -334,14 +335,14 @@ function ProfilePage() {
                   onClick={() => setIsDeletingAccount(false)}
                   disabled={deleteAccountMutation.isPending}
                 >
-                  キャンセル
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   variant="danger"
                   onClick={handleDeleteAccount}
                   disabled={deleteAccountMutation.isPending}
                 >
-                  {deleteAccountMutation.isPending ? '削除中...' : 'アカウントを削除'}
+                  {deleteAccountMutation.isPending ? t('common.loading') : t('profile.deleteAccount')}
                 </Button>
               </div>
             </div>

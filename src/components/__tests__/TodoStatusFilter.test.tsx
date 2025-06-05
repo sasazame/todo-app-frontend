@@ -1,6 +1,19 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import TodoStatusFilter from '../TodoStatusFilter';
 
+// Mock useTranslations to return actual strings
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      'todo.filter.all': 'すべて',
+      'todo.statusOptions.TODO': '未着手',
+      'todo.statusOptions.IN_PROGRESS': '進行中',
+      'todo.statusOptions.DONE': '完了',
+    };
+    return translations[key] || key;
+  },
+}));
+
 describe('TodoStatusFilter', () => {
   const mockOnStatusChange = jest.fn();
 
